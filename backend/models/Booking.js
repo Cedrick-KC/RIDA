@@ -36,7 +36,7 @@ const BookingSchema = new mongoose.Schema({
     },
     bookingType: {
         type: String,
-        enum: ['hourly', 'daily', 'weekly', 'monthly'],
+        enum: ['once', 'daily', 'weekly', 'monthly'],
         required: true
     },
     duration: {
