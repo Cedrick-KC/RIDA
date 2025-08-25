@@ -1117,13 +1117,22 @@ const HomePage = ({ setCurrentPage }) => {
                 <div className="col-md-6 mb-4 mb-md-0">
                   <h3 className="card-title">Your Trusted Transportation Partner</h3>
                   <p className="card-text">
-                    RIDA is a premier ride-booking service connecting customers with professional, 
-                    vetted drivers.Since 2025, we have been committed to serve customers wether after After drinks or night events, in long trips, special events, Touristic rides and many more. Want to book your ride  ia advance? No problem! We offer both immediate and scheduled bookings to fit your needs. We've got you covered.
+                    RIDA is a premier ride-booking platformcatering for different ride scenarios like
+                     <ul>
+                      <li>After drinks or Night Events: Enjoy yourself without worry. After drinksat the bar or an event we'll get you and your car safely</li>
+                       <li>Long trips outside Kigali: Heading outsude Kigali? Our experienced drivers ensure safe, comfortable journeys at fair, distance-based rates</li>
+                      <li>Family and Special Events: From weddings to family outings, corporate events to casual rides, we provide drivers who adapt to your needs</li>
+                      <li>Tourist and Diaspora clients: Discover Rwanda with a trusted driver who's also your local guide-fluent in the roads, communities, attractions, and experiences</li>
+             </ul>
                   </p>
                   <p className="card-text">
-                    We carefully screen all our drivers, ensuring they have clean driving records, 
-                    professional experience, and excellent customer service skills. Our fleet consists of 
-                    well-maintained, comfortable vehicles to make your journey pleasant.
+                    <h4>How it Works</h4>
+                      <ul>
+                      <li>Book a driver(Online or call)</li>
+                       <li>We send a Professional Driver to your location</li>
+                      <li>Enjoy your ride</li>
+                      <li>Pay perdictable fees</li>
+             </ul>
                   </p>
                 </div>
                 <div className="col-md-6 text-center">
@@ -1299,7 +1308,7 @@ const HomePage = ({ setCurrentPage }) => {
             className="btn btn-primary btn-lg fw-semibold"
             onClick={() => setCurrentPage('register')}
           >
-            <i className="bi bi-person-plus me-2"></i> Join Now
+            <i className="bi bi-person-plus me-2"></i> Book a driver Now
           </button>
           <button 
             className="btn btn-outline-primary btn-lg fw-semibold"
