@@ -1,0 +1,4 @@
+cat > .npmrc << EOL
+script-shell=true
+unsafe-perm=true
+EOL
