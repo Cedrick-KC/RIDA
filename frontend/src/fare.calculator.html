@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver Service Fare Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f4f6f8;
+    }
+    .calculator {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 12px 20px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #2C9B5F;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #24844e;
+    }
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h2>RIDA Calculator</h2>
+    <p>Calculate your fare based on distance<br> In case you have problems in calculating the distance<br>You may use Google Maps or ask your driver for help</p>
+    <input type="number" id="distance" placeholder="Enter distance in km">
+    <br>
+    <button onclick="calculateFare()">Calculate Fare</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function calculateFare() {
+      let distance = parseFloat(document.getElementById('distance').value);
+      let fare = 0;
+
+      if (distance <= 0 || isNaN(distance)) {
+        document.getElementById('result').innerText = "Please enter a valid distance.";
+        return;
+      }
+
+      if (distance <= 10) {
+        fare = 5000;
+      } else if (distance <= 50) {
+        fare = 5000 + (distance - 10) * 250;
+      } else {
+        fare = 5000 + (40 * 250) + ((distance - 50) * 90);
+      }
+
+      document.getElementById('result').innerText = "Estimated Fare: " + fare.toLocaleString() + " RWF";
+    }
+  </script>
+</body>
+</html>
