@@ -24,8 +24,8 @@ const cardVariants = {
 
 const AnimatedCard = ({ children, delay }) => {
   const { ref, inView } = useInView({
-    triggerOnce: true, // Animation will only happen once
-    threshold: 0.2, // Trigger when 20% of the element is visible
+    triggerOnce: true,
+    threshold: 0.2,
   });
   return (
     <motion.div
@@ -40,11 +40,118 @@ const AnimatedCard = ({ children, delay }) => {
   );
 };
 
+// Reusable Navbar Component to remove duplication
+const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, theme, sidebarCollapsed, toggleSidebar }) => {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top" style={{ backgroundColor: '#0056b3' }}>
+      <div className="container-fluid">
+        <a className="navbar-brand fw-bold d-flex align-items-center" href="#" onClick={() => setCurrentPage('home')}>
+          <i className="bi bi-car-front-fill me-2 fs-4"></i>
+          <span>RIDA</span>
+        </a>
+        <button className="navbar-toggler" type="button" onClick={toggleSidebar}>
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className={`collapse navbar-collapse ${sidebarCollapsed ? '' : 'show'}`} id="navbarNav">
+          <ul className="navbar-nav me-auto">
+            {!user && (
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => setCurrentPage('home')}>
+                  <i className="bi bi-house-door me-1"></i> Home
+                </button>
+              </li>
+            )}
+          </ul>
+          <div className="d-flex align-items-center">
+            {/* Theme toggle button */}
+            <button className="btn btn-outline-light me-2" onClick={toggleTheme} title="Toggle theme">
+              <i className={`bi ${theme === 'light' ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}></i>
+            </button>
+            
+            {user ? (
+              <>
+                {user.userType === 'admin' && (
+                  <button
+                    onClick={() => setCurrentPage('adminDashboard')}
+                    className={`btn ${currentPage === 'adminDashboard' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                  >
+                    <i className="bi bi-speedometer2 me-1"></i> Admin
+                  </button>
+                )}
+                {user.userType === 'customer' && (
+                  <>
+                    <button
+                      onClick={() => setCurrentPage('customerDashboard')}
+                      className={`btn ${currentPage === 'customerDashboard' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                    >
+                      <i className="bi bi-calendar-check me-1"></i> Book a Driver
+                    </button>
+                    <button
+                      onClick={() => setCurrentPage('fareCalculator')}
+                      className={`btn ${currentPage === 'fareCalculator' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                    >
+                      <i className="bi bi-calculator me-1"></i> Fare Calculator
+                    </button>
+                  </>
+                )}
+                {user.userType === 'driver' && (
+                  <button
+                    onClick={() => setCurrentPage('driverDashboard')}
+                    className={`btn ${currentPage === 'driverDashboard' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                  >
+                    <i className="bi bi-list-task me-1"></i> My Assignments
+                  </button>
+                )}
+                <button
+                  onClick={() => setCurrentPage('bookings')}
+                  className={`btn ${currentPage === 'bookings' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                >
+                  <i className="bi bi-receipt me-1"></i> My Bookings
+                </button>
+                <button
+                  onClick={() => setCurrentPage('reviews')}
+                  className={`btn ${currentPage === 'reviews' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                >
+                  <i className="bi bi-star me-1"></i> Reviews
+                </button>
+                <div className="dropdown">
+                  <button className="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i className="bi bi-person-circle me-1"></i> {user.name}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><button className="dropdown-item" onClick={handleLogout}><i className="bi bi-box-arrow-right me-2"></i> Logout</button></li>
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setCurrentPage('login')}
+                  className={`btn ${currentPage === 'login' ? 'btn-light' : 'btn-outline-light'} me-2`}
+                >
+                  <i className="bi bi-box-arrow-in-right me-1"></i> Login
+                </button>
+                <button
+                  onClick={() => setCurrentPage('register')}
+                  className={`btn ${currentPage === 'register' ? 'btn-light' : 'btn-success'} me-2`}
+                >
+                  <i className="bi bi-person-plus me-1"></i> Register
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
 // Fare Calculator Page Component - Customer Only
 const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
   const [distance, setDistance] = useState('');
   const [fare, setFare] = useState(null);
   const [error, setError] = useState('');
+  
   const calculateFare = () => {
     const distanceValue = parseFloat(distance);
     
@@ -69,78 +176,9 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
     
     setFare(calculatedFare);
   };
+  
   return (
     <>
-      {/* Navigation for the app */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
-        <div className="container-fluid">
-          <a className="navbar-brand fw-bold d-flex align-items-center" href="#" onClick={() => setCurrentPage('home')}>
-            <i className="bi bi-car-front-fill me-2 fs-4"></i>
-            <span>RIDA</span>
-          </a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav me-auto">
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => setCurrentPage('home')}>
-                  <i className="bi bi-house-door me-1"></i> Home
-                </button>
-              </li>
-              {user && user.userType === 'customer' && (
-                <>
-                  <li className="nav-item">
-                    <button className="nav-link btn btn-link" onClick={() => setCurrentPage('customerDashboard')}>
-                      <i className="bi bi-calendar-check me-1"></i> Book a Driver
-                    </button>
-                  </li>
-                  <li className="nav-item">
-                    <button className="nav-link btn btn-link active" onClick={() => setCurrentPage('fareCalculator')}>
-                      <i className="bi bi-calculator me-1"></i> Fare Calculator
-                    </button>
-                  </li>
-                </>
-              )}
-            </ul>
-            <div className="d-flex align-items-center">
-              {user ? (
-                <div className="dropdown">
-                  <button className="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i className="bi bi-person-circle me-1"></i> {user.name}
-                  </button>
-                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><button className="dropdown-item" onClick={() => setCurrentPage('bookings')}><i className="bi bi-receipt me-2"></i> My Bookings</button></li>
-                    <li><button className="dropdown-item" onClick={() => setCurrentPage('reviews')}><i className="bi bi-star me-2"></i> Reviews</button></li>
-                    <li><hr className="dropdown-divider" /></li>
-                    <li><button className="dropdown-item" onClick={() => {
-                      localStorage.removeItem('authToken');
-                      localStorage.removeItem('user');
-                      setCurrentPage('home');
-                      showMessage('You have been logged out.', 'info');
-                    }}><i className="bi bi-box-arrow-right me-2"></i> Logout</button></li>
-                  </ul>
-                </div>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setCurrentPage('login')}
-                    className="btn btn-outline-light me-2"
-                  >
-                    <i className="bi bi-box-arrow-in-right me-1"></i> Login
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage('register')}
-                    className="btn btn-success"
-                  >
-                    <i className="bi bi-person-plus me-1"></i> Register
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
       <div className="container py-4 py-md-5">
         <div className="row justify-content-center">
           <div className="col-12 col-md-10 col-lg-8 col-xl-6">
@@ -209,34 +247,6 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
           </div>
         </div>
       </div>
-      {/* Footer */}
-      <footer className="bg-dark text-white py-4 mt-auto">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-6 mb-4 mb-md-0">
-              <h5><i className="bi bi-car-front-fill me-2"></i>RIDA</h5>
-              <p>Your car. Your Comfort. Our driver</p>
-            </div>
-            <div className="col-md-3 mb-4 mb-md-0">
-              <h5>Quick Links</h5>
-              <ul className="list-unstyled">
-                <li><button className="btn btn-link text-white p-0" onClick={() => setCurrentPage('home')}>Home</button></li>
-                <li><button className="btn btn-link text-white p-0" onClick={() => setCurrentPage('fareCalculator')}>Fare Calculator</button></li>
-                <li><button className="btn btn-link text-white p-0" onClick={() => setCurrentPage('bookings')}>My Bookings</button></li>
-              </ul>
-            </div>
-            <div className="col-md-3">
-              <h5>Contact Us</h5>
-              <p><i className="bi bi-envelope me-2"></i> info@driverbooking.com</p>
-              <p><i className="bi bi-telephone me-2"></i> +(250) 796359266</p>
-            </div>
-          </div>
-          <hr className="bg-white" />
-          <div className="text-center">
-            <p className="mb-0">&copy; {new Date().getFullYear()} RIDA. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </>
   );
 };
@@ -453,108 +463,16 @@ const App = () => {
     <>
       <div className="d-flex flex-column min-vh-100">
         {/* Navigation for the app */}
-        <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
-          <div className="container-fluid">
-            <a className="navbar-brand fw-bold d-flex align-items-center" href="#" onClick={() => setCurrentPage('home')}>
-              <i className="bi bi-car-front-fill me-2 fs-4"></i>
-              <span>RIDA</span>
-            </a>
-            <button className="navbar-toggler" type="button" onClick={toggleSidebar}>
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className={`collapse navbar-collapse ${sidebarCollapsed ? '' : 'show'}`} id="navbarNav">
-              <ul className="navbar-nav me-auto">
-                {!user && (
-                  <li className="nav-item">
-                    <button className="nav-link btn btn-link" onClick={() => setCurrentPage('home')}>
-                      <i className="bi bi-house-door me-1"></i> Home
-                    </button>
-                  </li>
-                )}
-              </ul>
-              <div className="d-flex align-items-center">
-                {/* Theme toggle button */}
-                <button className="btn btn-outline-light me-2" onClick={toggleTheme} title="Toggle theme">
-                  <i className={`bi ${theme === 'light' ? 'bi-moon-stars-fill' : 'bi-sun-fill'}`}></i>
-                </button>
-                
-                {user ? (
-                  // Dynamic navigation for logged-in users based on their userType
-                  <>
-                    {user.userType === 'admin' && (
-                      <button
-                        onClick={() => setCurrentPage('adminDashboard')}
-                        className={`btn ${currentPage === 'adminDashboard' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                      >
-                        <i className="bi bi-speedometer2 me-1"></i> Admin
-                      </button>
-                    )}
-                    {user.userType === 'customer' && (
-                      <>
-                        <button
-                          onClick={() => setCurrentPage('customerDashboard')}
-                          className={`btn ${currentPage === 'customerDashboard' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                        >
-                          <i className="bi bi-calendar-check me-1"></i> Book a Driver
-                        </button>
-                        <button
-                          onClick={() => setCurrentPage('fareCalculator')}
-                          className={`btn ${currentPage === 'fareCalculator' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                        >
-                          <i className="bi bi-calculator me-1"></i> Fare Calculator
-                        </button>
-                      </>
-                    )}
-                    {user.userType === 'driver' && (
-                      <button
-                        onClick={() => setCurrentPage('driverDashboard')}
-                        className={`btn ${currentPage === 'driverDashboard' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                      >
-                        <i className="bi bi-list-task me-1"></i> My Assignments
-                      </button>
-                    )}
-                    <button
-                      onClick={() => setCurrentPage('bookings')}
-                      className={`btn ${currentPage === 'bookings' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                    >
-                      <i className="bi bi-receipt me-1"></i> My Bookings
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage('reviews')}
-                      className={`btn ${currentPage === 'reviews' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                    >
-                      <i className="bi bi-star me-1"></i> Reviews
-                    </button>
-                    <div className="dropdown">
-                      <button className="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i className="bi bi-person-circle me-1"></i> {user.name}
-                      </button>
-                      <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><button className="dropdown-item" onClick={handleLogout}><i className="bi bi-box-arrow-right me-2"></i> Logout</button></li>
-                      </ul>
-                    </div>
-                  </>
-                ) : (
-                  // Navigation for logged-out users
-                  <>
-                    <button
-                      onClick={() => setCurrentPage('login')}
-                      className={`btn ${currentPage === 'login' ? 'btn-light' : 'btn-outline-light'} me-2`}
-                    >
-                      <i className="bi bi-box-arrow-in-right me-1"></i> Login
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage('register')}
-                      className={`btn ${currentPage === 'register' ? 'btn-light' : 'btn-success'} me-2`}
-                    >
-                      <i className="bi bi-person-plus me-1"></i> Register
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </nav>
+        <Navbar 
+          user={user} 
+          currentPage={currentPage} 
+          setCurrentPage={setCurrentPage} 
+          handleLogout={handleLogout}
+          toggleTheme={toggleTheme}
+          theme={theme}
+          sidebarCollapsed={sidebarCollapsed}
+          toggleSidebar={toggleSidebar}
+        />
         
         <div className="container-fluid flex-grow-1">
           {renderPage()}
@@ -1167,7 +1085,7 @@ const HomePage = ({ setCurrentPage }) => {
   return (
     <div>
       {/* Hero Section */}
-      <div className="jumbotron bg-primary text-white rounded-3 p-4 p-md-5 mb-5 text-center">
+      <div className="jumbotron bg-primary text-white rounded-3 p-4 p-md-5 mb-5 text-center" style={{ backgroundColor: '#0056b3' }}>
         <h1 className="display-4 fw-bold mb-4">Welcome to RIDA</h1>
         <p className="lead mb-4">Your Car. Our Driver. Your Comfort & Safety.</p>
         <p>
@@ -1503,7 +1421,7 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
     pickupAddress: '',
     dropoffAddress: '',
     scheduledTime: '',
-    bookingType: 'hourly',
+    bookingType: 'once',
     durationValue: 1,
     durationUnit: 'hours',
     paymentMethod: "MomoPay Code 123456" // Only payment method allowed by backend
@@ -1734,7 +1652,7 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
         pickupAddress: '',
         dropoffAddress: '',
         scheduledTime: '',
-        bookingType: 'hourly',
+        bookingType: 'once',
         durationValue: 1,
         durationUnit: 'hours',
         paymentMethod: "MomoPay Code 123456" // Reset to the only allowed payment method
@@ -1977,40 +1895,46 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
                       value={bookingData.bookingType}
                       onChange={handleBookingInputChange}
                     >
-                      <option value="hourly">Hourly</option>
+                      <option value="once">Once</option>
+                      
                       <option value="daily">Daily</option>
                       <option value="weekly">Weekly</option>
                       <option value="monthly">Monthly</option>
                     </select>
                   </div>
-                  <div className="row mb-3">
-                    <div className="col">
-                      <label className="form-label">Duration</label>
-                      <input 
-                        type="number" 
-                        className="form-control" 
-                        name="durationValue"
-                        value={bookingData.durationValue}
-                        onChange={handleBookingInputChange}
-                        min="1"
-                        required
-                      />
+                  
+                  {/* Only show duration fields if booking type is not "once" */}
+                  {bookingData.bookingType !== 'once' && (
+                    <div className="row mb-3">
+                      <div className="col">
+                        <label className="form-label">Duration</label>
+                        <input 
+                          type="number" 
+                          className="form-control" 
+                          name="durationValue"
+                          value={bookingData.durationValue}
+                          onChange={handleBookingInputChange}
+                          min="1"
+                          required
+                        />
+                      </div>
+                      <div className="col">
+                        <label className="form-label">Unit</label>
+                        <select 
+                          className="form-select" 
+                          name="durationUnit"
+                          value={bookingData.durationUnit}
+                          onChange={handleBookingInputChange}
+                        >
+                          <option value="hours">Hours</option>
+                          <option value="days">Days</option>
+                          <option value="weeks">Weeks</option>
+                          <option value="months">Months</option>
+                        </select>
+                      </div>
                     </div>
-                    <div className="col">
-                      <label className="form-label">Unit</label>
-                      <select 
-                        className="form-select" 
-                        name="durationUnit"
-                        value={bookingData.durationUnit}
-                        onChange={handleBookingInputChange}
-                      >
-                        <option value="hours">Hours</option>
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                      </select>
-                    </div>
-                  </div>
+                  )}
+                  
                   <div className="mb-3">
                     <label className="form-label">Payment Method</label>
                     <input 
@@ -2412,7 +2336,7 @@ const BookingList = ({ user, token, showMessage }) => {
       setLoading(false);
       setBookings([]);
     }
-  }, [token, showMessage]);
+  }, [token, showMessage, user.name]);
   
   const openReviewModal = (booking) => {
     setSelectedBooking(booking);
