@@ -28,6 +28,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+     "prebuild": "chmod +x node_modules/.bin/react-scripts || true",
     "build:css": "tailwindcss -i ./src/App.css -o ./dist/output.css --watch",
     "start": "react-scripts start",
     "build": "react-scripts build",
