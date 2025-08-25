@@ -45,7 +45,6 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
   const [distance, setDistance] = useState('');
   const [fare, setFare] = useState(null);
   const [error, setError] = useState('');
-
   const calculateFare = () => {
     const distanceValue = parseFloat(distance);
     
@@ -70,7 +69,6 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
     
     setFare(calculatedFare);
   };
-
   return (
     <>
       {/* Navigation for the app */}
@@ -143,14 +141,13 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
           </div>
         </div>
       </nav>
-
-      <div className="container py-5">
+      <div className="container py-4 py-md-5">
         <div className="row justify-content-center">
-          <div className="col-md-8 col-lg-6">
+          <div className="col-12 col-md-10 col-lg-8 col-xl-6">
             <div className="card shadow-sm">
-              <div className="card-body p-4">
-                <h2 className="card-title text-center mb-4">RIDA Fare Calculator</h2>
-                <p className="text-muted text-center mb-4">
+              <div className="card-body p-3 p-md-4">
+                <h2 className="card-title text-center mb-3 mb-md-4">RIDA Fare Calculator</h2>
+                <p className="text-muted text-center mb-3 mb-md-4">
                   Calculate your fare based on distance<br />
                   In case you have problems in calculating the distance<br />
                   You may use Google Maps or ask your driver for help
@@ -186,7 +183,7 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
                 {fare !== null && (
                   <div className="alert alert-success mt-3" role="alert">
                     <h5 className="alert-heading">Estimated Fare</h5>
-                    <p className="mb-0 fs-4 fw-bold">{fare.toLocaleString()} RWF</p>
+                    <p className="mb-0 fs-4 fs-md-5 fw-bold">{fare.toLocaleString()} RWF</p>
                   </div>
                 )}
                 
@@ -212,16 +209,15 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
           </div>
         </div>
       </div>
-
       {/* Footer */}
       <footer className="bg-dark text-white py-4 mt-auto">
         <div className="container">
           <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-6 mb-4 mb-md-0">
               <h5><i className="bi bi-car-front-fill me-2"></i>RIDA</h5>
               <p>Your reliable ride booking service.</p>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 mb-4 mb-md-0">
               <h5>Quick Links</h5>
               <ul className="list-unstyled">
                 <li><button className="btn btn-link text-white p-0" onClick={() => setCurrentPage('home')}>Home</button></li>
@@ -568,11 +564,11 @@ const App = () => {
         <footer className="bg-dark text-white py-4 mt-auto">
           <div className="container">
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-6 mb-4 mb-md-0">
                 <h5><i className="bi bi-car-front-fill me-2"></i>RIDA</h5>
                 <p>Your reliable ride booking service.</p>
               </div>
-              <div className="col-md-3">
+              <div className="col-md-3 mb-4 mb-md-0">
                 <h5>Quick Links</h5>
                 <ul className="list-unstyled">
                   <li><button className="btn btn-link text-white p-0" onClick={() => setCurrentPage('home')}>Home</button></li>
@@ -746,7 +742,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
   
   return (
     <div className="row g-4">
-      <div className="col-md-3 col-lg-2">
+      <div className="col-12 col-lg-3 col-xl-2">
         <div className="card shadow-sm">
           <div className="card-body p-0">
             <div className="list-group list-group-flush">
@@ -754,40 +750,40 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                 className={`list-group-item list-group-item-action ${activeTab === 'dashboard' ? 'active' : ''}`}
                 onClick={() => setActiveTab('dashboard')}
               >
-                <i className="bi bi-speedometer2 me-2"></i> Dashboard
+                <i className="bi bi-speedometer2 me-2"></i> <span className="d-none d-md-inline">Dashboard</span>
               </button>
               <button 
                 className={`list-group-item list-group-item-action ${activeTab === 'users' ? 'active' : ''}`}
                 onClick={() => setActiveTab('users')}
               >
-                <i className="bi bi-people me-2"></i> Users
+                <i className="bi bi-people me-2"></i> <span className="d-none d-md-inline">Users</span>
               </button>
               <button 
                 className={`list-group-item list-group-item-action ${activeTab === 'drivers' ? 'active' : ''}`}
                 onClick={() => setActiveTab('drivers')}
               >
-                <i className="bi bi-person-badge me-2"></i> Drivers
+                <i className="bi bi-person-badge me-2"></i> <span className="d-none d-md-inline">Drivers</span>
               </button>
               <button 
                 className={`list-group-item list-group-item-action ${activeTab === 'bookings' ? 'active' : ''}`}
                 onClick={() => setActiveTab('bookings')}
               >
-                <i className="bi bi-calendar-check me-2"></i> Bookings
+                <i className="bi bi-calendar-check me-2"></i> <span className="d-none d-md-inline">Bookings</span>
               </button>
               <button 
                 className={`list-group-item list-group-item-action ${activeTab === 'reports' ? 'active' : ''}`}
                 onClick={() => setActiveTab('reports')}
               >
-                <i className="bi bi-graph-up me-2"></i> Reports
+                <i className="bi bi-graph-up me-2"></i> <span className="d-none d-md-inline">Reports</span>
               </button>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="col-md-9 col-lg-10">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="h3 fw-bold">Admin Dashboard</h2>
+      <div className="col-12 col-lg-9 col-xl-10">
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+          <h2 className="h3 fw-bold mb-3 mb-md-0">Admin Dashboard</h2>
           <div className="text-muted">
             <i className="bi bi-person-circle me-1"></i> {user.name}
           </div>
@@ -796,7 +792,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
         {activeTab === 'dashboard' && (
           <div>
             <div className="row g-4 mb-4">
-              <div className="col-md-6 col-lg-3">
+              <div className="col-6 col-md-6 col-lg-3">
                 <div className="card border-0 shadow-sm h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -814,7 +810,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                 </div>
               </div>
               
-              <div className="col-md-6 col-lg-3">
+              <div className="col-6 col-md-6 col-lg-3">
                 <div className="card border-0 shadow-sm h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -832,7 +828,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                 </div>
               </div>
               
-              <div className="col-md-6 col-lg-3">
+              <div className="col-6 col-md-6 col-lg-3">
                 <div className="card border-0 shadow-sm h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -850,7 +846,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                 </div>
               </div>
               
-              <div className="col-md-6 col-lg-3">
+              <div className="col-6 col-md-6 col-lg-3">
                 <div className="card border-0 shadow-sm h-100">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
@@ -940,8 +936,8 @@ const AdminDashboard = ({ user, token, showMessage }) => {
         
         {activeTab === 'users' && (
           <div className="card border-0 shadow-sm">
-            <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">Manage Users</h5>
+            <div className="card-header bg-white border-0 py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+              <h5 className="mb-3 mb-md-0">Manage Users</h5>
               <button className="btn btn-primary btn-sm">
                 <i className="bi bi-plus-circle me-1"></i> Add User
               </button>
@@ -953,8 +949,8 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                     <tr>
                       <th>Name</th>
                       <th>Email</th>
-                      <th>User Type</th>
-                      <th>Registered</th>
+                      <th className="d-none d-md-table-cell">User Type</th>
+                      <th className="d-none d-md-table-cell">Registered</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -969,13 +965,16 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                             {user.name}
                           </div>
                         </td>
-                        <td>{user.email}</td>
                         <td>
+                          <span className="d-md-none">{user.email.substring(0, 15)}...</span>
+                          <span className="d-none d-md-inline">{user.email}</span>
+                        </td>
+                        <td className="d-none d-md-table-cell">
                           <span className={`badge ${user.userType === 'admin' ? 'bg-danger' : user.userType === 'driver' ? 'bg-primary' : 'bg-success'}`}>
                             {user.userType}
                           </span>
                         </td>
-                        <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                        <td className="d-none d-md-table-cell">{new Date(user.createdAt).toLocaleDateString()}</td>
                         <td>
                           <div className="btn-group" role="group">
                             <button className="btn btn-sm btn-outline-primary">
@@ -1000,8 +999,8 @@ const AdminDashboard = ({ user, token, showMessage }) => {
         
         {activeTab === 'drivers' && (
           <div className="card border-0 shadow-sm">
-            <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">Manage Drivers</h5>
+            <div className="card-header bg-white border-0 py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+              <h5 className="mb-3 mb-md-0">Manage Drivers</h5>
               <button className="btn btn-primary btn-sm">
                 <i className="bi bi-plus-circle me-1"></i> Add Driver
               </button>
@@ -1012,7 +1011,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Vehicle</th>
+                      <th className="d-none d-md-table-cell">Vehicle</th>
                       <th>Rating</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -1029,7 +1028,7 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                             {driver.user.name}
                           </div>
                         </td>
-                        <td>{driver.vehicle.make} {driver.vehicle.model}</td>
+                        <td className="d-none d-md-table-cell">{driver.vehicle.make} {driver.vehicle.model}</td>
                         <td>
                           <div className="d-flex align-items-center">
                             <i className="bi bi-star-fill text-warning me-1"></i>
@@ -1062,8 +1061,8 @@ const AdminDashboard = ({ user, token, showMessage }) => {
         
         {activeTab === 'bookings' && (
           <div className="card border-0 shadow-sm">
-            <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
-              <h5 className="mb-0">Manage Bookings</h5>
+            <div className="card-header bg-white border-0 py-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+              <h5 className="mb-3 mb-md-0">Manage Bookings</h5>
               <div className="d-flex">
                 <input type="text" className="form-control form-control-sm me-2" placeholder="Search bookings..." />
                 <button className="btn btn-outline-primary btn-sm">
@@ -1077,8 +1076,8 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                   <thead>
                     <tr>
                       <th>Booking ID</th>
-                      <th>Customer</th>
-                      <th>Driver</th>
+                      <th className="d-none d-md-table-cell">Customer</th>
+                      <th className="d-none d-md-table-cell">Driver</th>
                       <th>Date</th>
                       <th>Status</th>
                       <th>Amount</th>
@@ -1089,8 +1088,8 @@ const AdminDashboard = ({ user, token, showMessage }) => {
                     {bookings.map(booking => (
                       <tr key={booking._id}>
                         <td>#{booking._id.substring(0, 8)}</td>
-                        <td>{booking.customer?.name || 'N/A'}</td>
-                        <td>{booking.driver?.user?.name || 'N/A'}</td>
+                        <td className="d-none d-md-table-cell">{booking.customer?.name || 'N/A'}</td>
+                        <td className="d-none d-md-table-cell">{booking.driver?.user?.name || 'N/A'}</td>
                         <td>{new Date(booking.createdAt).toLocaleDateString()}</td>
                         <td>
                           <span className={`badge ${booking.status === 'completed' ? 'bg-success' : booking.status === 'accepted' ? 'bg-primary' : booking.status === 'pending' ? 'bg-warning' : 'bg-secondary'}`}>
@@ -1168,10 +1167,10 @@ const HomePage = ({ setCurrentPage }) => {
   return (
     <div>
       {/* Hero Section */}
-      <div className="jumbotron bg-primary text-white rounded-3 p-5 mb-5 text-center">
+      <div className="jumbotron bg-primary text-white rounded-3 p-4 p-md-5 mb-5 text-center">
         <h1 className="display-4 fw-bold mb-4">Welcome to RIDA</h1>
         <p className="lead mb-4">Your Car. Our Driver. Your Comfort & Safety.</p>
-        <div className="d-flex justify-content-center gap-3">
+        <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
           <button 
             className="btn btn-light btn-lg fw-semibold"
             onClick={() => setCurrentPage('register')}
@@ -1192,7 +1191,7 @@ const HomePage = ({ setCurrentPage }) => {
         <div className="col-12">
           <h2 className="text-center mb-4">Who We Are</h2>
           <div className="card border-0 shadow-sm">
-            <div className="card-body p-4">
+            <div className="card-body p-3 p-md-4">
               <div className="row align-items-center">
                 <div className="col-md-6 mb-4 mb-md-0">
                   <h3 className="card-title">Your Trusted Transportation Partner</h3>
@@ -1224,7 +1223,7 @@ const HomePage = ({ setCurrentPage }) => {
         <h2 className="text-center mb-4">Why Ride With Us</h2>
         <div className="row g-4">
           {/* Card 1 */}
-          <div className="col-md-3">
+          <div className="col-6 col-md-3">
             <AnimatedCard delay={0.1}>
               <div className="card h-100 border-0 shadow-sm text-center p-4">
                 <div className="text-primary mb-3">
@@ -1236,7 +1235,7 @@ const HomePage = ({ setCurrentPage }) => {
             </AnimatedCard>
           </div>
           {/* Card 2 */}
-          <div className="col-md-3">
+          <div className="col-6 col-md-3">
             <AnimatedCard delay={0.3}>
               <div className="card h-100 border-0 shadow-sm text-center p-4">
                 <div className="text-success mb-3">
@@ -1251,7 +1250,7 @@ const HomePage = ({ setCurrentPage }) => {
             </AnimatedCard>
           </div>
           {/* Card 3 */}
-          <div className="col-md-3">
+          <div className="col-6 col-md-3">
             <AnimatedCard delay={0.5}>
               <div className="card h-100 border-0 shadow-sm text-center p-4">
                 <div className="text-info mb-3">
@@ -1263,7 +1262,7 @@ const HomePage = ({ setCurrentPage }) => {
             </AnimatedCard>
           </div>
           {/* Card 4 */}
-          <div className="col-md-3">
+          <div className="col-6 col-md-3">
             <AnimatedCard delay={0.7}>
               <div className="card h-100 border-0 shadow-sm text-center p-4">
                 <div className="text-warning mb-3">
@@ -1297,7 +1296,7 @@ const HomePage = ({ setCurrentPage }) => {
                     <span className="text-muted">5.0</span>
                   </div>
                   <p className="card-text">
-                    "After a late night out, I don’t worry anymore. I know I’ll get home safely as if am with my car.” "
+                    "After a late night out, I don't worry anymore. I know I'll get home safely as if am with my car.""
                   </p>
                   <div className="d-flex align-items-center">
                     <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '40px', height: '40px'}}>
@@ -1325,7 +1324,7 @@ const HomePage = ({ setCurrentPage }) => {
                     <span className="text-muted">5.0</span>
                   </div>
                   <p className="card-text">
-                    "We used the service for a family trip outside Kigali. The driver was professional and the pricing was so clear.” "
+                    "We used the service for a family trip outside Kigali. The driver was professional and the pricing was so clear.""
                   </p>
                   <div className="d-flex align-items-center">
                     <div className="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '40px', height: '40px'}}>
@@ -1374,7 +1373,7 @@ const HomePage = ({ setCurrentPage }) => {
       {/* Call to Action */}
       <div className="text-center py-5">
         <h2 className="mb-4">Ready to Experience the Best Ride Service?</h2>
-        <div className="d-flex justify-content-center gap-3">
+        <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
           <button 
             className="btn btn-primary btn-lg fw-semibold"
             onClick={() => setCurrentPage('register')}
@@ -1434,7 +1433,7 @@ const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
   
   return (
     <div className="modal show d-block" tabIndex="-1">
-      <div className="modal-dialog">
+      <div className="modal-dialog modal-dialog-centered">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Rate Your Experience</h5>
@@ -1770,14 +1769,14 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
   }
   
   return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <div>
+    <div className="p-3 p-md-4">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <div className="mb-3 mb-md-0">
           <h2 className="h3 fw-bold">Welcome, {user.name}!</h2>
           <p className="text-muted">Find and book a driver for your next trip.</p>
         </div>
-        <div>
-          <button className="btn btn-outline-primary me-2" onClick={fetchDrivers}>
+        <div className="d-flex flex-wrap gap-2">
+          <button className="btn btn-outline-primary" onClick={fetchDrivers}>
             <i className="bi bi-arrow-clockwise me-1"></i> Refresh
           </button>
           <button 
@@ -1785,7 +1784,7 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
             onClick={() => setShowFareCalculator(!showFareCalculator)}
           >
             <i className="bi bi-calculator me-1"></i> 
-            {showFareCalculator ? 'Hide Calculator' : 'Show Calculator'}
+            {showFareCalculator ? 'Hide' : 'Show'} Calculator
           </button>
         </div>
       </div>
@@ -1793,7 +1792,7 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
       {/* Fare Calculator - shown when showFareCalculator is true */}
       {showFareCalculator && (
         <div className="card border-0 shadow-sm mb-4">
-          <div className="card-body p-4">
+          <div className="card-body p-3 p-md-4">
             <h3 className="h5 mb-3">Fare Calculator</h3>
             <div className="row">
               <div className="col-md-6">
@@ -1864,7 +1863,7 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
       <div className="row g-4">
         {drivers.length > 0 ? (
           drivers.map(driver => (
-            <div key={driver._id} className="col-md-6 col-lg-4">
+            <div key={driver._id} className="col-12 col-md-6 col-lg-4">
               <div className="card h-100 border-0 shadow-sm">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-3">
@@ -1926,7 +1925,7 @@ const CustomerDashboard = ({ user, token, showMessage }) => {
       {/* Booking Form Modal */}
       {showBookingForm && selectedDriver && (
         <div className="modal show d-block" tabIndex="-1">
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Book Driver: {selectedDriver.user.name}</h5>
@@ -2209,9 +2208,9 @@ const DriverDashboard = ({ user, token, showMessage }) => {
   }
   
   return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="h3 fw-bold">My Assignments</h2>
+    <div className="p-3 p-md-4">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <h2 className="h3 fw-bold mb-3 mb-md-0">My Assignments</h2>
         
         {/* Driver Availability Toggle */}
         {driverProfile && (
@@ -2259,7 +2258,7 @@ const DriverDashboard = ({ user, token, showMessage }) => {
       <div className="row g-4">
         {bookings.length > 0 ? (
           bookings.map(booking => (
-            <div key={booking._id} className="col-md-6">
+            <div key={booking._id} className="col-12 col-md-6">
               <div className="card border-0 shadow-sm h-100">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-3">
@@ -2436,9 +2435,9 @@ const BookingList = ({ user, token, showMessage }) => {
   }
   
   return (
-    <div className="p-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="h3 fw-bold">My Bookings</h2>
+    <div className="p-3 p-md-4">
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <h2 className="h3 fw-bold mb-3 mb-md-0">My Bookings</h2>
         <div className="d-flex gap-2">
           <button className="btn btn-outline-primary btn-sm">
             <i className="bi bi-filter me-1"></i> Filter
@@ -2452,7 +2451,7 @@ const BookingList = ({ user, token, showMessage }) => {
       <div className="row g-4">
         {bookings.length > 0 ? (
           bookings.map(booking => (
-            <div key={booking._id} className="col-md-6">
+            <div key={booking._id} className="col-12 col-md-6">
               <div className="card border-0 shadow-sm h-100">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-3">
@@ -2596,12 +2595,12 @@ const ReviewsPage = ({ user, token, showMessage }) => {
   }
   
   return (
-    <div className="p-4">
+    <div className="p-3 p-md-4">
       <h2 className="h3 fw-bold mb-4">My Reviews</h2>
       <div className="row g-4">
         {reviews.length > 0 ? (
           reviews.map(review => (
-            <div key={review._id} className="col-md-6">
+            <div key={review._id} className="col-12 col-md-6">
               <div className="card border-0 shadow-sm h-100">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-3">
@@ -2696,7 +2695,7 @@ const Login = ({ onLoginSuccess, showMessage }) => {
   
   return (
     <div className="d-flex justify-content-center align-items-center h-100 p-4">
-      <div className="bg-white p-4 rounded-3 shadow-sm w-100" style={{maxWidth: '24rem'}}>
+      <div className="bg-white p-4 p-md-5 rounded-3 shadow-sm w-100" style={{maxWidth: '24rem'}}>
         <h2 className="h4 fw-bold mb-4 text-center">Login</h2>
         <form onSubmit={handleLogin}>
           {error && <div className="alert alert-danger mb-4 text-center" role="alert">{error}</div>}
@@ -2795,8 +2794,8 @@ const Register = ({ onRegisterSuccess, showMessage }) => {
         payload.vehicle = {
           make: formData.vehicle.make.trim(),
           model: formData.vehicle.model.trim(),
-          licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(), // Normalize license plate
-          color: formData.vehicle.color.trim(),
+          licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(), // plate
+          color: formData.vehicle.color Normalize license.trim(),
         };
         payload.pricing = formData.pricing;
         payload.bio = formData.bio.trim();
@@ -2844,7 +2843,7 @@ const Register = ({ onRegisterSuccess, showMessage }) => {
   };
   
   return (
-    <div className="container p-4 bg-light rounded-3 shadow">
+    <div className="container p-4 p-md-5 bg-light rounded-3 shadow">
       <h2 className="h3 fw-bold text-center mb-4">Register</h2>
       <form onSubmit={handleSubmit} className="d-grid gap-3">
         <div className="form-group">
