@@ -4,6 +4,12 @@ import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
+console.log('=== DEBUGGING ENVIRONMENT VARIABLES ===');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+console.log('All REACT_APP vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')));
+console.log('============================================');
+
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
