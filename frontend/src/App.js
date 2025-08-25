@@ -83,6 +83,45 @@ const themeColors = {
   }
 };
 
+// MovingCarIcon component for the hero section
+const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
+  return (
+    <motion.div
+      className="position-absolute"
+      style={{ 
+        top: `${20 + Math.random() * 60}%`,
+        left: direction === 'right' ? '-50px' : 'auto',
+        right: direction === 'left' ? '-50px' : 'auto',
+        zIndex: 1
+      }}
+      initial={{ x: direction === 'right' ? -50 : 50, opacity: 0 }}
+      animate={{ 
+        x: direction === 'right' ? [0, 100, 200] : [0, -100, -200],
+        opacity: [0, 1, 0]
+      }}
+      transition={{ 
+        duration: 8, 
+        delay,
+        repeat: Infinity,
+        repeatDelay: 3
+      }}
+    >
+      <motion.i 
+        className="bi bi-car-front-fill text-white opacity-50"
+        style={{ fontSize: '2rem' }}
+        animate={{ 
+          y: [0, -3, 0],
+        }}
+        transition={{ 
+          duration: 1, 
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    </motion.div>
+  );
+};
+
 // Animated Card Component
 const AnimatedCard = ({ children, delay }) => {
   const { ref, inView } = useInView({
@@ -1440,7 +1479,7 @@ const AdminDashboard = ({ user, token, showMessage, theme }) => {
   );
 };
 
-// Homepage component
+// Enhanced Homepage component with improved hero section
 const HomePage = ({ setCurrentPage, theme }) => {
   const colors = themeColors[theme];
   
@@ -1451,59 +1490,145 @@ const HomePage = ({ setCurrentPage, theme }) => {
       exit="exit"
       variants={pageTransition}
     >
-      {/* Hero Section */}
+      {/* Enhanced Hero Section with moving cars and smaller size */}
       <motion.div 
-        className="jumbotron text-white rounded-3 p-4 p-md-5 mb-5 text-center"
+        className="jumbotron text-white rounded-3 p-3 p-md-4 mb-5 text-center position-relative overflow-hidden"
         style={{ backgroundColor: colors.primary }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <motion.h1 
-          className="display-4 fw-bold mb-4"
-          initial={{ y: -20 }}
-          animate={{ y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          Welcome to RIDA
-        </motion.h1>
-        <motion.p 
-          className="lead mb-4"
-          initial={{ y: -20 }}
-          animate={{ y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          Your Car. Our Driver. Your Comfort & Safety.
-        </motion.p>
-        <motion.p
-          initial={{ y: -20 }}
-          animate={{ y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          Trusted professional drivers ready when you need them. Whether you're late, heading out of Kigali or just want peace of mind
-        </motion.p>
+        {/* Moving car icons */}
+        <MovingCarIcon direction="right" delay={0} />
+        <MovingCarIcon direction="left" delay={2} />
+        <MovingCarIcon direction="right" delay={4} />
+        
+        {/* Floating icons */}
         <motion.div 
-          className="d-flex flex-column flex-sm-row justify-content-center gap-3"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8 }}
+          className="position-absolute"
+          style={{ top: '10%', left: '10%', zIndex: 1 }}
+          animate={{ 
+            y: [0, -15, 0],
+            opacity: [0.3, 0.7, 0.3]
+          }}
+          transition={{ 
+            duration: 4, 
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         >
-          <motion.button 
-            className="btn btn-light btn-lg fw-semibold"
-            onClick={() => setCurrentPage('register')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <i className="bi bi-shield-check text-white" style={{ fontSize: '1.5rem' }}></i>
+        </motion.div>
+        
+        <motion.div 
+          className="position-absolute"
+          style={{ top: '20%', right: '15%', zIndex: 1 }}
+          animate={{ 
+            y: [0, -10, 0],
+            opacity: [0.3, 0.7, 0.3]
+          }}
+          transition={{ 
+            duration: 3.5, 
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+        >
+          <i className="bi bi-currency-dollar text-white" style={{ fontSize: '1.5rem' }}></i>
+        </motion.div>
+        
+        <motion.div 
+          className="position-absolute"
+          style={{ bottom: '15%', left: '20%', zIndex: 1 }}
+          animate={{ 
+            y: [0, -12, 0],
+            opacity: [0.3, 0.7, 0.3]
+          }}
+          transition={{ 
+            duration: 4.5, 
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        >
+          <i className="bi bi-clock-history text-white" style={{ fontSize: '1.5rem' }}></i>
+        </motion.div>
+        
+        <motion.div 
+          className="position-absolute"
+          style={{ bottom: '20%', right: '10%', zIndex: 1 }}
+          animate={{ 
+            y: [0, -8, 0],
+            opacity: [0.3, 0.7, 0.3]
+          }}
+          transition={{ 
+            duration: 3, 
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.5
+          }}
+        >
+          <i className="bi bi-person-badge text-white" style={{ fontSize: '1.5rem' }}></i>
+        </motion.div>
+        
+        {/* Main content */}
+        <motion.div 
+          className="position-relative"
+          style={{ zIndex: 2 }}
+        >
+          <motion.h1 
+            className="display-5 fw-bold mb-3"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
           >
-            <i className="bi bi-person-plus me-2"></i> Sign Up Now
-          </motion.button>
-          <motion.button 
-            className="btn btn-outline-light btn-lg fw-semibold"
-            onClick={() => setCurrentPage('login')}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            Welcome to RIDA
+          </motion.h1>
+          <motion.p 
+            className="lead mb-3"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
           >
-            <i className="bi bi-box-arrow-in-right me-2"></i> Login
-          </motion.button>
+            Your Car. Our Driver. Your Comfort & Safety.
+          </motion.p>
+          <motion.p
+            className="mb-4"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            Trusted professional drivers ready when you need them
+          </motion.p>
+          <motion.div 
+            className="d-flex flex-column flex-sm-row justify-content-center gap-3"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <motion.button 
+              className="btn btn-light btn-lg fw-semibold px-4"
+              onClick={() => setCurrentPage('register')}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 25px -5px rgba(255, 255, 255, 0.3)"
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <i className="bi bi-person-plus me-2"></i> Sign Up Now
+            </motion.button>
+            <motion.button 
+              className="btn btn-outline-light btn-lg fw-semibold px-4"
+              onClick={() => setCurrentPage('login')}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 25px -5px rgba(255, 255, 255, 0.1)"
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <i className="bi bi-box-arrow-in-right me-2"></i> Login
+            </motion.button>
+          </motion.div>
         </motion.div>
       </motion.div>
       
@@ -1536,10 +1661,31 @@ const HomePage = ({ setCurrentPage, theme }) => {
                   </p>
                 </div>
                 <div className="col-md-6 text-center">
-                  {/* Replaced image with car icon */}
-                  <div className="d-flex justify-content-center align-items-center" style={{height: '300px'}}>
-                    <i className="bi bi-car-front-fill text-primary" style={{fontSize: '8rem'}}></i>
-                  </div>
+                  {/* Animated car icon */}
+                  <motion.div 
+                    className="d-flex justify-content-center align-items-center"
+                    style={{ height: '250px' }}
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <motion.i 
+                      className="bi bi-car-front-fill text-primary" 
+                      style={{ fontSize: '7rem' }}
+                      animate={{ 
+                        x: [0, 5, 0],
+                        rotate: [0, 2, 0]
+                      }}
+                      transition={{ 
+                        duration: 3, 
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -1555,52 +1701,96 @@ const HomePage = ({ setCurrentPage, theme }) => {
           {/* Card 1 */}
           <div className="col-6 col-md-3">
             <AnimatedCard delay={0.1}>
-              <div className="card h-100 border-0 shadow-sm text-center p-4" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
-                <div className="text-primary mb-3">
+              <motion.div 
+                className="card h-100 border-0 shadow-sm text-center p-4"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
+                <motion.div 
+                  className="text-primary mb-3"
+                  whileHover={{ rotate: 15, scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <i className="bi bi-shield-check fs-1"></i>
-                </div>
+                </motion.div>
                 <h4 className="card-title">Safety First</h4>
                 <p className="card-text">All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.</p>
-              </div>
+              </motion.div>
             </AnimatedCard>
           </div>
           {/* Card 2 */}
           <div className="col-6 col-md-3">
             <AnimatedCard delay={0.3}>
-              <div className="card h-100 border-0 shadow-sm text-center p-4" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
-                <div className="text-success mb-3">
+              <motion.div 
+                className="card h-100 border-0 shadow-sm text-center p-4"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
+                <motion.div 
+                  className="text-success mb-3"
+                  whileHover={{ rotate: 15, scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <i className="bi bi-currency-dollar fs-1"></i>
-                </div>
+                </motion.div>
                 <h4 className="card-title">Affordable Rates</h4>
                 <p className="card-text">Competitive pricing with no hidden fees. Where •	Flat Fee (0–10km): 5,000 RWF
 •	Within 50km: 250 RWF/km
 •	Beyond 50km: 90 RWF/km
  </p>
-              </div>
+              </motion.div>
             </AnimatedCard>
           </div>
           {/* Card 3 */}
           <div className="col-6 col-md-3">
             <AnimatedCard delay={0.5}>
-              <div className="card h-100 border-0 shadow-sm text-center p-4" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
-                <div className="text-info mb-3">
+              <motion.div 
+                className="card h-100 border-0 shadow-sm text-center p-4"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
+                <motion.div 
+                  className="text-info mb-3"
+                  whileHover={{ rotate: 15, scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <i className="bi bi-clock-history fs-1"></i>
-                </div>
+                </motion.div>
                 <h4 className="card-title">24/7 Availability</h4>
                 <p className="card-text">Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use Web-app.</p>
-              </div>
+              </motion.div>
             </AnimatedCard>
           </div>
           {/* Card 4 */}
           <div className="col-6 col-md-3">
             <AnimatedCard delay={0.7}>
-              <div className="card h-100 border-0 shadow-sm text-center p-4" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
-                <div className="text-warning mb-3">
+              <motion.div 
+                className="card h-100 border-0 shadow-sm text-center p-4"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
+                <motion.div 
+                  className="text-warning mb-3"
+                  whileHover={{ rotate: 15, scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <i className="bi bi-person-badge fs-1"></i>
-                </div>
+                </motion.div>
                 <h4 className="card-title">Professional Drivers</h4>
                 <p className="card-text">Experienced, courteous drivers who prioritize your comfort and punctuality.</p>
-              </div>
+              </motion.div>
             </AnimatedCard>
           </div>
         </div>
@@ -1613,7 +1803,14 @@ const HomePage = ({ setCurrentPage, theme }) => {
           <h2 className="text-center mb-4">What Our Customers Say</h2>
           <div className="row g-4">
             <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
+              <motion.div 
+                className="card h-100 border-0 shadow-sm"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
                 <div className="card-body p-4">
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-warning me-2">
@@ -1638,10 +1835,17 @@ const HomePage = ({ setCurrentPage, theme }) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
             <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
+              <motion.div 
+                className="card h-100 border-0 shadow-sm"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
                 <div className="card-body p-4">
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-warning me-2">
@@ -1666,10 +1870,17 @@ const HomePage = ({ setCurrentPage, theme }) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
             <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
+              <motion.div 
+                className="card h-100 border-0 shadow-sm"
+                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                }}
+              >
                 <div className="card-body p-4">
                   <div className="d-flex align-items-center mb-3">
                     <div className="text-warning me-2">
@@ -1694,7 +1905,7 @@ const HomePage = ({ setCurrentPage, theme }) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -1705,17 +1916,23 @@ const HomePage = ({ setCurrentPage, theme }) => {
         <h2 className="mb-4">Ready to Experience the Best Ride Service?</h2>
         <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
           <motion.button 
-            className="btn btn-primary btn-lg fw-semibold"
+            className="btn btn-primary btn-lg fw-semibold px-4"
             onClick={() => setCurrentPage('register')}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.3)"
+            }}
             whileTap={{ scale: 0.95 }}
           >
             <i className="bi bi-person-plus me-2"></i> Book a driver Now
           </motion.button>
           <motion.button 
-            className="btn btn-outline-primary btn-lg fw-semibold"
+            className="btn btn-outline-primary btn-lg fw-semibold px-4"
             onClick={() => setCurrentPage('login')}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.1)"
+            }}
             whileTap={{ scale: 0.95 }}
           >
             <i className="bi bi-box-arrow-in-right me-2"></i> Sign In
