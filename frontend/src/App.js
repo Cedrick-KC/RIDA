@@ -215,7 +215,7 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage }) => {
           <div className="row">
             <div className="col-md-6 mb-4 mb-md-0">
               <h5><i className="bi bi-car-front-fill me-2"></i>RIDA</h5>
-              <p>Your reliable ride booking service.</p>
+              <p>Your car. Your Comfort. Our driver</p>
             </div>
             <div className="col-md-3 mb-4 mb-md-0">
               <h5>Quick Links</h5>
@@ -1170,6 +1170,9 @@ const HomePage = ({ setCurrentPage }) => {
       <div className="jumbotron bg-primary text-white rounded-3 p-4 p-md-5 mb-5 text-center">
         <h1 className="display-4 fw-bold mb-4">Welcome to RIDA</h1>
         <p className="lead mb-4">Your Car. Our Driver. Your Comfort & Safety.</p>
+        <p>
+        Trusted professional drivers ready when you need them. Whether you're late, heading out of Kigali or just want peace of mind
+       </p>
         <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
           <button 
             className="btn btn-light btn-lg fw-semibold"
