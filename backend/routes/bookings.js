@@ -32,7 +32,7 @@ router.post('/', [
     auth,
     body('driverId', 'Driver ID is required').not().isEmpty(),
     body('pickupLocation', 'Pickup location is required').not().isEmpty(),
-    body('bookingType', 'Booking type is required').isIn(['hourly', 'daily', 'weekly', 'monthly']),
+    body('bookingType', 'Booking type is required').isIn(['once', 'daily', 'weekly', 'monthly']),
     body('duration', 'Duration is required').not().isEmpty(),
     body('paymentMethod', 'Payment method is required').isIn(['MomoPay Code 123456'])
 ], async (req, res) => {
