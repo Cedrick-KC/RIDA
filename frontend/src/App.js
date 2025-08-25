@@ -1296,7 +1296,7 @@ const HomePage = ({ setCurrentPage }) => {
                     <span className="text-muted">5.0</span>
                   </div>
                   <p className="card-text">
-                    "After a late night out, I don't worry anymore. I know I'll get home safely as if am with my car.""
+                    "After a late night out, I don't worry anymore. I know I'll get home safely as if am with my car."
                   </p>
                   <div className="d-flex align-items-center">
                     <div className="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '40px', height: '40px'}}>
@@ -1324,7 +1324,7 @@ const HomePage = ({ setCurrentPage }) => {
                     <span className="text-muted">5.0</span>
                   </div>
                   <p className="card-text">
-                    "We used the service for a family trip outside Kigali. The driver was professional and the pricing was so clear.""
+                    "We used the service for a family trip outside Kigali. The driver was professional and the pricing was so clear."
                   </p>
                   <div className="d-flex align-items-center">
                     <div className="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '40px', height: '40px'}}>
@@ -1352,7 +1352,7 @@ const HomePage = ({ setCurrentPage }) => {
                     <span className="text-muted">4.5</span>
                   </div>
                   <p className="card-text">
-                    "The booking process is simple and straightforward.As a tourist, having a driver who also acted as a guide made all the difference."
+                    "The booking process is simple and straightforward. As a tourist, having a driver who also acted as a guide made all the difference."
                   </p>
                   <div className="d-flex align-items-center">
                     <div className="bg-info rounded-circle d-flex align-items-center justify-content-center me-3" style={{width: '40px', height: '40px'}}>
@@ -2794,8 +2794,8 @@ const Register = ({ onRegisterSuccess, showMessage }) => {
         payload.vehicle = {
           make: formData.vehicle.make.trim(),
           model: formData.vehicle.model.trim(),
-          licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(), // plate
-          color: formData.vehicle.color Normalize license.trim(),
+          licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(), // Normalize license plate
+          color: formData.vehicle.color.trim(),
         };
         payload.pricing = formData.pricing;
         payload.bio = formData.bio.trim();
