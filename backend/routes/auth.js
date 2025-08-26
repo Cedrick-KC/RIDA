@@ -211,14 +211,21 @@ router.post('/login', [
     try {
         console.log('Login attempt for email:', email);
         
-        // Find user by email (case insensitive)
-        let user = await User.findOne({ email: email.toLowerCase().trim() });
+        // Find user by email (case insensitive) and explicitly include password
+        let user = await User.findOne({ email: email.toLowerCase().trim() }).select('+password');
+        
         if (!user) {
             console.log('User not found with email:', email);
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
         
         console.log('User found:', user._id, user.name);
+        
+        // Verify password exists
+        if (!user.password) {
+            console.error('Password field missing for user:', user._id);
+            return res.status(500).json({ msg: 'Server configuration error' });
+        }
         
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
