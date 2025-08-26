@@ -4,6 +4,36 @@ const { body, validationResult } = require('express-validator');
 const Driver = require('../models/Driver.js');
 const User = require('../models/User.js');
 const auth = require('../middleware/auth.js');
+const multer = require('multer');
+const path = require('path');
+
+// Configure multer for profile picture uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../uploads/profiles'));
+    },
+    filename: function (req, file, cb) {
+        cb(null, `driver-${Date.now()}-${file.fieldname}${path.extname(file.originalname)}`);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedFileTypes = /jpeg|jpg|png|gif/;
+        const extname = allowedFileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedFileTypes.test(file.mimetype);
+
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'));
+        }
+    }
+});
 
 // Helper function to calculate end time based on duration
 const calculateEndTime = (startTime, duration) => {
@@ -30,8 +60,13 @@ const calculateEndTime = (startTime, duration) => {
 router.get('/', async (req, res) => {
     try {
         const {
-            location,
+            ageRange,
+            minExperience,
             transmission,
+            vehicleType,
+            serviceArea,
+            timeAvailability,
+            serviceType,
             language,
             minRating,
             maxDistance = 10,
@@ -40,17 +75,48 @@ router.get('/', async (req, res) => {
             scheduledTime,
             duration
         } = req.query;
+        
         let query = { 'availability.isAvailable': true };
         let sortOptions = {};
         
+        // Filter by age range
+        if (ageRange && ageRange !== '') {
+            query.ageRange = ageRange;
+        }
+        
+        // Filter by minimum experience
+        if (minExperience && minExperience !== '') {
+            query.yearsOfExperience = { $gte: parseInt(minExperience) };
+        }
+        
         // Filter by transmission
-        if (transmission && transmission !== 'all') {
-            query['vehicle.transmission'] = transmission;
+        if (transmission && transmission !== '') {
+            query.transmissionProficiency = { $in: [transmission, 'both'] };
+        }
+        
+        // Filter by vehicle type
+        if (vehicleType && vehicleType !== '') {
+            query.vehicleTypesComfortable = { $in: [vehicleType] };
+        }
+        
+        // Filter by service area
+        if (serviceArea && serviceArea !== '') {
+            query.preferredServiceAreas = { $in: [serviceArea] };
+        }
+        
+        // Filter by time availability
+        if (timeAvailability && timeAvailability !== '') {
+            query.timeAvailability = { $in: [timeAvailability, 'flexible'] };
+        }
+        
+        // Filter by service type
+        if (serviceType && serviceType !== '') {
+            query.openToServices = { $in: [serviceType] };
         }
         
         // Filter by language
-        if (language && language !== 'all') {
-            query.languages = { $in: [language] };
+        if (language && language !== '') {
+            query.languagesSpoken = { $in: [language] };
         }
         
         // Filter by minimum rating
@@ -66,14 +132,16 @@ router.get('/', async (req, res) => {
             case 'price':
                 sortOptions = { 'pricing.hourlyRate': 1 };
                 break;
-            case 'distance':
-                // Implement geospatial query here if location is provided
+            case 'experience':
+                sortOptions = { 'yearsOfExperience': -1 };
                 break;
+            default:
+                sortOptions = { 'ratings.average': -1 };
         }
         
         // Get all potentially available drivers
         let drivers = await Driver.find(query)
-            .populate('user', 'name email phone profileImage')
+            .populate('user', 'name email phone profilePicture')
             .sort(sortOptions);
         
         // Apply time-based filtering if scheduledTime and duration are provided
@@ -204,7 +272,7 @@ router.get('/availability/:id', async (req, res) => {
 router.get('/all-drivers', async (req, res) => {
     try {
         const drivers = await Driver.find()
-            .populate('user', 'name email phone profileImage');
+            .populate('user', 'name email phone profilePicture');
         
         if (drivers.length === 0) {
             return res.status(404).json({ msg: 'No drivers found.' });
@@ -272,35 +340,66 @@ router.post('/', [
     auth,
     body('vehicle.make', 'Vehicle make is required').not().isEmpty(),
     body('vehicle.model', 'Vehicle model is required').not().isEmpty(),
-    body('licensePlate', 'License plate is required').not().isEmpty(),
-    body('pricing.hourlyRate', 'Hourly rate is required').isNumeric()
+    body('vehicle.licensePlate', 'License plate is required').not().isEmpty(),
+    body('vehicle.color', 'Vehicle color is required').not().isEmpty(),
+    body('pricing.hourlyRate', 'Hourly rate is required').isNumeric(),
+    body('ageRange', 'Age range is required').isIn(['20-30', '30-40', '40+']),
+    body('yearsOfExperience', 'Years of experience is required').isNumeric(),
+    body('transmissionProficiency', 'Transmission proficiency is required').isIn(['manual', 'automatic', 'both'])
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
+    
     const {
         vehicle,
-        licensePlate,
-        languages,
         pricing,
         bio,
+        ageRange,
+        yearsOfExperience,
+        transmissionProficiency,
+        vehicleTypesComfortable,
+        preferredServiceAreas,
+        timeAvailability,
+        openToServices,
+        languagesSpoken,
         isAvailable,
         currentLocation
     } = req.body;
-
+    
     const driverFields = {
         user: req.user.id,
         email: req.user.email, // Get email from authenticated user
-        vehicle,
-        licensePlate,
-        languages,
-        pricing,
-        bio,
+        // Basic driver information
+        ageRange,
+        yearsOfExperience: parseInt(yearsOfExperience),
+        bio: bio || '',
+        // Vehicle information
+        vehicle: {
+            make: vehicle.make,
+            model: vehicle.model,
+            licensePlate: vehicle.licensePlate.toUpperCase(),
+            color: vehicle.color,
+            year: vehicle.year || new Date().getFullYear()
+        },
+        // Driver preferences
+        transmissionProficiency,
+        vehicleTypesComfortable: vehicleTypesComfortable || [],
+        preferredServiceAreas: preferredServiceAreas || ['kigali'],
+        timeAvailability: timeAvailability || 'flexible',
+        openToServices: openToServices || ['shortTrips'],
+        languagesSpoken: languagesSpoken || ['english', 'kinyarwanda'],
+        // Pricing
+        pricing: {
+            hourlyRate: pricing?.hourlyRate || 25,
+            dailyRate: pricing?.dailyRate || 200,
+            weeklyRate: pricing?.weeklyRate || 1200,
+            monthlyRate: pricing?.monthlyRate || 4000
+        },
         'availability.isAvailable': isAvailable !== undefined ? isAvailable : true
     };
-
+    
     // Add current location if provided
     if (currentLocation) {
         // If currentLocation is provided as coordinates [longitude, latitude]
@@ -314,12 +413,12 @@ router.post('/', [
         else if (typeof currentLocation === 'object' && currentLocation.address) {
             driverFields.currentLocation = {
                 type: 'Point',
-                coordinates: currentLocation.coordinates || [0, 0],
+                coordinates: currentLocation.coordinates || [30.0619, -1.9441],
                 address: currentLocation.address
             };
         }
     }
-
+    
     try {
         let driver = await Driver.findOne({ user: req.user.id });
         
@@ -329,7 +428,7 @@ router.post('/', [
                 { user: req.user.id },
                 { $set: driverFields },
                 { new: true }
-            ).populate('user', 'name email phone');
+            ).populate('user', 'name email phone profilePicture');
             
             console.log(`✅ Driver profile updated: ${driver._id}`);
             return res.json(driver);
@@ -340,7 +439,7 @@ router.post('/', [
         await newDriver.save();
         
         const populatedDriver = await Driver.findById(newDriver._id)
-            .populate('user', 'name email phone');
+            .populate('user', 'name email phone profilePicture');
             
         console.log(`✅ New driver profile created: ${populatedDriver._id}`);
         res.json(populatedDriver);
@@ -407,7 +506,7 @@ router.put('/availability', auth, async (req, res) => {
             else if (typeof currentLocation === 'object' && currentLocation.address) {
                 driver.currentLocation = {
                     type: 'Point',
-                    coordinates: currentLocation.coordinates || [0, 0],
+                    coordinates: currentLocation.coordinates || [30.0619, -1.9441],
                     address: currentLocation.address
                 };
             }
@@ -435,7 +534,7 @@ router.put('/availability', auth, async (req, res) => {
 router.get('/profile', auth, async (req, res) => {
     try {
         const driver = await Driver.findOne({ user: req.user.id })
-            .populate('user', 'name email phone profileImage');
+            .populate('user', 'name email phone profilePicture');
         
         if (!driver) {
             return res.status(404).json({ msg: 'Driver profile not found' });
@@ -520,6 +619,38 @@ router.put('/location', auth, async (req, res) => {
         
     } catch (err) {
         console.error('Error updating location:', err.message);
+        res.status(500).json({ msg: 'Server Error', error: err.message });
+    }
+});
+
+// @route   POST api/drivers/profile-picture
+// @desc    Upload driver profile picture
+// @access  Private
+router.post('/profile-picture', auth, upload.single('profilePicture'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ msg: 'No file uploaded' });
+        }
+        
+        const driver = await Driver.findOne({ user: req.user.id });
+        if (!driver) {
+            return res.status(404).json({ msg: 'Driver profile not found' });
+        }
+        
+        const profilePicturePath = `/uploads/profiles/${req.file.filename}`;
+        
+        driver.profilePicture = profilePicturePath;
+        await driver.save();
+        
+        console.log(`✅ Driver ${driver._id} profile picture updated`);
+        res.json({
+            driverId: driver._id,
+            profilePicture: profilePicturePath,
+            message: 'Profile picture updated successfully'
+        });
+        
+    } catch (err) {
+        console.error('Error uploading profile picture:', err.message);
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 });
