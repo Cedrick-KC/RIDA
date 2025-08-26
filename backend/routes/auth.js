@@ -219,3 +219,48 @@ router.post('/login', [
         }
         
         console.log('User found:', user._id, user.name);
+        
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            console.log('Password mismatch for user:', user._id);
+            return res.status(400).json({ msg: 'Invalid credentials' });
+        }
+
+        // Generate JWT token
+        const payload = {
+            user: {
+                id: user.id,
+                userType: user.userType,
+            },
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET || 'supersecretkey',
+            { expiresIn: '24h' },
+            (err, token) => {
+                if (err) {
+                    console.error('JWT signing error:', err);
+                    throw err;
+                }
+                
+                res.json({ 
+                    token, 
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        userType: user.userType,
+                        phone: user.phone
+                    }
+                });
+            }
+        );
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ msg: 'Server Error' });
+    }
+});
+
+module.exports = router;
