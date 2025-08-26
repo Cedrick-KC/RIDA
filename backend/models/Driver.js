@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const DriverSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -14,48 +13,85 @@ const DriverSchema = new mongoose.Schema({
         trim: true,
         lowercase: true
     },
-    vehicle: {
-        make: { type: String, default: 'Not specified' },
-        model: { type: String, default: 'Not specified' },
-        year: { type: Number, default: () => new Date().getFullYear() },
-        color: { type: String, default: 'Not specified' }
-    },
-    licensePlate: {  
+    // Basic driver information
+    ageRange: {
         type: String,
+        enum: ['20-30', '30-40', '40+'],
+        required: true
+    },
+    yearsOfExperience: {
+        type: Number,
         required: true,
-        unique: true,
+        min: 0
+    },
+    bio: {
+        type: String,
         trim: true
     },
+    profilePicture: {
+        type: String,
+        default: ''
+    },
+    // Vehicle information
+    vehicle: {
+        make: { type: String, required: true },
+        model: { type: String, required: true },
+        licensePlate: { 
+            type: String, 
+            required: true,
+            unique: true,
+            trim: true,
+            uppercase: true
+        },
+        color: { type: String, required: true },
+        year: { type: Number, default: () => new Date().getFullYear() }
+    },
+    // Driver preferences and capabilities
+    transmissionProficiency: {
+        type: String,
+        enum: ['manual', 'automatic', 'both'],
+        default: 'both'
+    },
+    vehicleTypesComfortable: [{
+        type: String,
+        enum: ['sedan', 'suv', 'van', 'pickup', 'luxury']
+    }],
+    preferredServiceAreas: [{
+        type: String,
+        enum: ['kigali', 'outsideKigali', 'nationwide']
+    }],
+    timeAvailability: {
+        type: String,
+        enum: ['day', 'night', 'flexible'],
+        default: 'flexible'
+    },
+    openToServices: [{
+        type: String,
+        enum: ['shortTrips', 'longTrips', 'events', 'tours']
+    }],
+    languagesSpoken: [{
+        type: String,
+        enum: ['english', 'kinyarwanda', 'french']
+    }],
+    // Ratings and pricing
     ratings: {
-        average: { type: Number, default: 5.0 },
+        average: { type: Number, default: 5.0, min: 1, max: 5 },
         count: { type: Number, default: 0 }
     },
     pricing: {
-        hourlyRate: { type: Number, default: 25 },
-        dailyRate: { type: Number, default: 200 },
-        weeklyRate: { type: Number, default: 1200 },
-        monthlyRate: { type: Number, default: 4000 }
+        hourlyRate: { type: Number, default: 25, min: 0 },
+        dailyRate: { type: Number, default: 200, min: 0 },
+        weeklyRate: { type: Number, default: 1200, min: 0 },
+        monthlyRate: { type: Number, default: 4000, min: 0 }
     },
+    // Availability and location
     availability: {
         isAvailable: { type: Boolean, default: true },
         workingHours: {
             start: { type: String, default: '08:00' },
             end: { type: String, default: '18:00' }
         },
-        // Add this to the DriverSchema
-currentLocation: {
-    type: {
-        type: String,
-        enum: ['Point'],
-        default: 'Point'
-    },
-    coordinates: {
-        type: [Number],
-        default: [0, 0]
-    },
-    address: String
-},
-        // New fields for time-based availability
+        // Time-based availability tracking
         bookedSlots: [{
             bookingId: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -76,6 +112,18 @@ currentLocation: {
                 default: 'active'
             }
         }]
+    },
+    currentLocation: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point'
+        },
+        coordinates: {
+            type: [Number],
+            default: [30.0619, -1.9441] // Default to Kigali coordinates
+        },
+        address: String
     }
 }, {
     timestamps: true
