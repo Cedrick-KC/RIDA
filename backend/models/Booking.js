@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const BookingSchema = new mongoose.Schema({
     customer: {
         type: mongoose.Schema.Types.ObjectId,
@@ -112,4 +113,6 @@ const BookingSchema = new mongoose.Schema({
 BookingSchema.index({ 'pickupLocation': '2dsphere' });
 BookingSchema.index({ 'dropoffLocation': '2dsphere' });
 
-module.exports = mongoose.model('Booking', Booking);
+const Booking = mongoose.model('Booking', BookingSchema);
+
+module.exports = Booking;
