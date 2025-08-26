@@ -52,7 +52,7 @@ router.post('/register', [
             password,
             phone: phone.trim(),
             userType,
-            location: location || ''
+            location: '' // Added empty string as default for location
         });
         
         // Hash password
@@ -113,6 +113,11 @@ router.post('/register', [
             } catch (driverError) {
                 console.error('❌ Error creating driver profile:', driverError);
                 console.error('Driver creation failed but user was created successfully');
+                
+                // If driver creation fails, we should delete the user that was already created
+                await User.findByIdAndDelete(user._id);
+                console.log(`❌ Deleted user ${user._id} due to driver profile creation failure`);
+                
                 // This re-throws the error to be caught by the outer try-catch block
                 throw driverError; 
             }
@@ -151,6 +156,7 @@ router.post('/register', [
         );
     } catch (err) {
         console.error('Registration error:', err);
+        console.error('Error stack:', err.stack);
         
         if (err.code === 11000) {
             const field = Object.keys(err.keyPattern)[0];
