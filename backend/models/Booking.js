@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const BookingSchema = new mongoose.Schema({
     customer: {
         type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +36,7 @@ const BookingSchema = new mongoose.Schema({
     bookingType: {
         type: String,
         enum: ['once', 'daily', 'weekly', 'monthly'],
-        required: true
+        default: 'once'
     },
     duration: {
         value: { type: Number, required: true },
@@ -47,10 +46,28 @@ const BookingSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    // Add this to the BookingSchema
-actualEndTime: {
-    type: Date
-},
+    // New fields for enhanced booking experience
+    vehicleType: {
+        type: String,
+        enum: ['sedan', 'suv', 'van', 'pickup', 'luxury']
+    },
+    transmissionType: {
+        type: String,
+        enum: ['manual', 'automatic', 'both']
+    },
+    distance: {
+        type: Number,
+        default: 0
+    },
+    language: {
+        type: String,
+        enum: ['english', 'kinyarwanda', 'french'],
+        default: 'english'
+    },
+    // Timeline and status tracking
+    actualEndTime: {
+        type: Date
+    },
     status: {
         type: String,
         enum: ['pending', 'accepted', 'started', 'completed', 'cancelled'],
@@ -63,7 +80,7 @@ actualEndTime: {
     },
     paymentMethod: {
         type: String,
-        enum: ['MomoPay Code 123456','mtn_money', 'airtel_money', 'card', 'paypal', 'cash'],
+        enum: ['MomoPay Code 123456', 'mtn_money', 'airtel_money', 'card', 'paypal', 'cash'],
         required: true
     },
     pricing: {
@@ -95,4 +112,4 @@ actualEndTime: {
 BookingSchema.index({ 'pickupLocation': '2dsphere' });
 BookingSchema.index({ 'dropoffLocation': '2dsphere' });
 
-module.exports = mongoose.model('Booking', BookingSchema);
+module.exports = mongoose.model('Booking', Booking);
