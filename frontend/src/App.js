@@ -1625,7 +1625,7 @@ const HomePage = ({ setCurrentPage, theme }) => {
               }}
               whileTap={{ scale: 0.95 }}
             >
-              <i className="bi bi-person-plus me-2"></i> Sign Up Now
+              <i className="bi bi-person-plus me-2"></i>Book Your Driver Now
             </motion.button>
             <motion.button 
               className="btn btn-outline-light btn-lg fw-semibold px-4"
