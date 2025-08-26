@@ -181,13 +181,11 @@ const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, 
         
         <div className={`collapse navbar-collapse ${sidebarCollapsed ? '' : 'show'}`} id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {!user && (
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => setCurrentPage('home')}>
-                  <i className="bi bi-house-door me-1"></i> Home
-                </button>
-              </li>
-            )}
+            <li className="nav-item">
+              <button className="nav-link btn btn-link" onClick={() => setCurrentPage('home')}>
+                <i className="bi bi-house-door me-1"></i> Home
+              </button>
+            </li>
           </ul>
           
           <div className="d-flex flex-column flex-lg-row align-items-center gap-2 gap-lg-3">
@@ -311,7 +309,7 @@ const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant
   </motion.button>
 );
 
-// Enhanced Driver Card Component
+// Enhanced Driver Card Component with profile picture
 const DriverCard = ({ driver, onBook, isBooking, theme }) => {
   const colors = themeColors[theme];
   
@@ -325,24 +323,36 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
     >
       <div className="card-body d-flex flex-column">
         <div className="d-flex justify-content-between align-items-start mb-3">
-          <div>
-            <h5 className="card-title mb-1">{driver.user.name}</h5>
-            <div className="d-flex align-items-center gap-2">
-              <span className={`badge ${driver.availability?.isAvailable ? 'bg-success' : 'bg-danger'}`}>
-                {driver.availability?.isAvailable ? 'Available' : 'Unavailable'}
-              </span>
-              <div className="d-flex align-items-center">
-                <i className="bi bi-star-fill text-warning me-1"></i>
-                <span>{driver.ratings?.average?.toFixed(1) || '5.0'}</span>
+          <div className="d-flex align-items-center">
+            {/* Profile picture */}
+            <div className="me-3">
+              {driver.profilePicture ? (
+                <img 
+                  src={driver.profilePicture} 
+                  alt={driver.user.name}
+                  className="rounded-circle"
+                  style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                />
+              ) : (
+                <div className="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" 
+                     style={{ width: '60px', height: '60px' }}>
+                  <i className="bi bi-person text-primary fs-4"></i>
+                </div>
+              )}
+            </div>
+            <div>
+              <h5 className="card-title mb-1">{driver.user.name}</h5>
+              <div className="d-flex align-items-center gap-2">
+                <span className={`badge ${driver.availability?.isAvailable ? 'bg-success' : 'bg-danger'}`}>
+                  {driver.availability?.isAvailable ? 'Available' : 'Unavailable'}
+                </span>
+                <div className="d-flex align-items-center">
+                  <i className="bi bi-star-fill text-warning me-1"></i>
+                  <span>{driver.ratings?.average?.toFixed(1) || '5.0'}</span>
+                </div>
               </div>
             </div>
           </div>
-          <motion.div 
-            className="rounded-circle bg-primary bg-opacity-10 p-3"
-            whileHover={{ rotate: 10 }}
-          >
-            <i className="bi bi-person text-primary fs-4"></i>
-          </motion.div>
         </div>
         
         <div className="mb-4">
@@ -1490,7 +1500,7 @@ const HomePage = ({ setCurrentPage, theme }) => {
       exit="exit"
       variants={pageTransition}
     >
-      {/* Enhanced Hero Section with moving cars and smaller size */}
+      {/* 1. Welcome Section */}
       <motion.div 
         className="jumbotron text-white rounded-3 p-3 p-md-4 mb-5 text-center position-relative overflow-hidden"
         style={{ backgroundColor: colors.primary }}
@@ -1632,7 +1642,7 @@ const HomePage = ({ setCurrentPage, theme }) => {
         </motion.div>
       </motion.div>
       
-      {/* Who We Are Section */}
+      {/* 2. Who We Are Section */}
       <div className="row mb-5">
         <div className="col-12">
           <h2 className="text-center mb-4">Who We Are</h2>
@@ -1642,22 +1652,22 @@ const HomePage = ({ setCurrentPage, theme }) => {
                 <div className="col-md-6 mb-4 mb-md-0">
                   <h3 className="card-title">Your Trusted Transportation Partner</h3>
                   <p className="card-text">
-                    RIDA is a premier ride-booking platformcatering for different ride scenarios like
-                     <ul>
-                      <li>After drinks or Night Events: Enjoy yourself without worry. After drinksat the bar or an event we'll get you and your car safely</li>
-                       <li>Long trips outside Kigali: Heading outsude Kigali? Our experienced drivers ensure safe, comfortable journeys at fair, distance-based rates</li>
-                      <li>Family and Special Events: From weddings to family outings, corporate events to casual rides, we provide drivers who adapt to your needs</li>
-                      <li>Tourist and Diaspora clients: Discover Rwanda with a trusted driver who's also your local guide-fluent in the roads, communities, attractions, and experiences</li>
-             </ul>
+                    RIDA is a premier ride-booking platform catering for different ride scenarios like:
                   </p>
+                  <ul>
+                    <li>After drinks or Night Events: Enjoy yourself without worry. After drinks at the bar or an event we'll get you and your car safely</li>
+                    <li>Long trips outside Kigali: Heading outside Kigali? Our experienced drivers ensure safe, comfortable journeys at fair, distance-based rates</li>
+                    <li>Family and Special Events: From weddings to family outings, corporate events to casual rides, we provide drivers who adapt to your needs</li>
+                    <li>Tourist and Diaspora clients: Discover Rwanda with a trusted driver who's also your local guide - fluent in the roads, communities, attractions, and experiences</li>
+                  </ul>
                   <p className="card-text">
                     <h4>How it Works</h4>
-                      <ul>
-                      <li>Book a driver(Online or call)</li>
-                       <li>We send a Professional Driver to your location</li>
+                    <ul>
+                      <li>Book a driver (Online or call)</li>
+                      <li>We send a Professional Driver to your location</li>
                       <li>Enjoy your ride</li>
-                      <li>Pay perdictable fees</li>
-             </ul>
+                      <li>Pay predictable fees</li>
+                    </ul>
                   </p>
                 </div>
                 <div className="col-md-6 text-center">
@@ -1693,110 +1703,289 @@ const HomePage = ({ setCurrentPage, theme }) => {
         </div>
       </div>
       
-      {/* Why Ride With Us Section */}
+      {/* 3. Service Packages Section */}
       <div className="row mb-5">
-      <div className="col-12">
-        <h2 className="text-center mb-4">Why Ride With Us</h2>
-        <div className="row g-4">
-          {/* Card 1 */}
-          <div className="col-6 col-md-3">
-            <AnimatedCard delay={0.1}>
-              <motion.div 
-                className="card h-100 border-0 shadow-sm text-center p-4"
-                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                whileHover={{ 
-                  y: -10,
-                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                }}
-              >
+        <div className="col-12">
+          <h2 className="text-center mb-4">Our Service Packages</h2>
+          <div className="row g-4">
+            <div className="col-12 col-md-6 col-lg-3">
+              <AnimatedCard delay={0.1}>
                 <motion.div 
-                  className="text-primary mb-3"
-                  whileHover={{ rotate: 15, scale: 1.2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
                 >
-                  <i className="bi bi-shield-check fs-1"></i>
+                  <motion.div 
+                    className="text-primary mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-cup-straw fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Night Out</h4>
+                  <p className="card-text">Enjoy your evening without worrying about driving. Our professional drivers will get you and your car home safely.</p>
                 </motion.div>
-                <h4 className="card-title">Safety First</h4>
-                <p className="card-text">All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.</p>
-              </motion.div>
-            </AnimatedCard>
-          </div>
-          {/* Card 2 */}
-          <div className="col-6 col-md-3">
-            <AnimatedCard delay={0.3}>
-              <motion.div 
-                className="card h-100 border-0 shadow-sm text-center p-4"
-                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                whileHover={{ 
-                  y: -10,
-                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                }}
-              >
+              </AnimatedCard>
+            </div>
+            <div className="col-12 col-md-6 col-lg-3">
+              <AnimatedCard delay={0.3}>
                 <motion.div 
-                  className="text-success mb-3"
-                  whileHover={{ rotate: 15, scale: 1.2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
                 >
-                  <i className="bi bi-currency-dollar fs-1"></i>
+                  <motion.div 
+                    className="text-success mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-geo-alt-fill fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Long Distance</h4>
+                  <p className="card-text">Traveling outside Kigali? Our experienced drivers ensure safe, comfortable journeys at fair, distance-based rates.</p>
                 </motion.div>
-                <h4 className="card-title">Affordable Rates</h4>
-                <p className="card-text">Competitive pricing with no hidden fees. Where •	Flat Fee (0–10km): 5,000 RWF
-•	Within 50km: 250 RWF/km
-•	Beyond 50km: 90 RWF/km
- </p>
-              </motion.div>
-            </AnimatedCard>
-          </div>
-          {/* Card 3 */}
-          <div className="col-6 col-md-3">
-            <AnimatedCard delay={0.5}>
-              <motion.div 
-                className="card h-100 border-0 shadow-sm text-center p-4"
-                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                whileHover={{ 
-                  y: -10,
-                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                }}
-              >
+              </AnimatedCard>
+            </div>
+            <div className="col-12 col-md-6 col-lg-3">
+              <AnimatedCard delay={0.5}>
                 <motion.div 
-                  className="text-info mb-3"
-                  whileHover={{ rotate: 15, scale: 1.2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
                 >
-                  <i className="bi bi-clock-history fs-1"></i>
+                  <motion.div 
+                    className="text-info mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-people-fill fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Special Events</h4>
+                  <p className="card-text">From weddings to family outings, corporate events to casual rides, we provide drivers who adapt to your needs.</p>
                 </motion.div>
-                <h4 className="card-title">24/7 Availability</h4>
-                <p className="card-text">Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use Web-app.</p>
-              </motion.div>
-            </AnimatedCard>
-          </div>
-          {/* Card 4 */}
-          <div className="col-6 col-md-3">
-            <AnimatedCard delay={0.7}>
-              <motion.div 
-                className="card h-100 border-0 shadow-sm text-center p-4"
-                style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                whileHover={{ 
-                  y: -10,
-                  boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                }}
-              >
+              </AnimatedCard>
+            </div>
+            <div className="col-12 col-md-6 col-lg-3">
+              <AnimatedCard delay={0.7}>
                 <motion.div 
-                  className="text-warning mb-3"
-                  whileHover={{ rotate: 15, scale: 1.2 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
                 >
-                  <i className="bi bi-person-badge fs-1"></i>
+                  <motion.div 
+                    className="text-warning mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-camera-fill fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Tourism</h4>
+                  <p className="card-text">Discover Rwanda with a trusted driver who's also your local guide - fluent in the roads, communities, attractions, and experiences.</p>
                 </motion.div>
-                <h4 className="card-title">Professional Drivers</h4>
-                <p className="card-text">Experienced, courteous drivers who prioritize your comfort and punctuality.</p>
-              </motion.div>
-            </AnimatedCard>
+              </AnimatedCard>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  
+      
+      {/* 4. How It Works Section */}
+      <div className="row mb-5">
+        <div className="col-12">
+          <h2 className="text-center mb-4">How It Works</h2>
+          <div className="card border-0 shadow-sm" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
+            <div className="card-body p-3 p-md-4">
+              <div className="row align-items-center">
+                <div className="col-md-6 mb-4 mb-md-0">
+                  <h3 className="card-title">Easy Booking Process</h3>
+                  <p className="card-text">
+                    Our platform makes it simple to find and book the perfect driver for your needs:
+                  </p>
+                  <ol>
+                    <li><strong>Sign Up or Login:</strong> Create an account or log in to your existing account.</li>
+                    <li><strong>Filter Drivers:</strong> Use our advanced filtering system to find drivers that match your specific requirements:
+                      <ul>
+                        <li>Age range and years of experience</li>
+                        <li>Vehicle type and transmission preference</li>
+                        <li>Service areas and availability</li>
+                        <li>Languages spoken and service types</li>
+                      </ul>
+                    </li>
+                    <li><strong>Book Your Driver:</strong> Select your preferred driver and provide trip details including pickup location, time, and destination.</li>
+                    <li><strong>Enjoy Your Ride:</strong> Your professional driver will arrive at the scheduled time and get you to your destination safely.</li>
+                    <li><strong>Pay & Rate:</strong> Pay the calculated fare and rate your experience to help us improve our service.</li>
+                  </ol>
+                </div>
+                <div className="col-md-6 text-center">
+                  {/* Animated steps illustration */}
+                  <div className="d-flex flex-column align-items-center">
+                    {[1, 2, 3, 4, 5].map((step, index) => (
+                      <motion.div 
+                        key={step}
+                        className="d-flex align-items-center mb-3"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.2 }}
+                      >
+                        <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                             style={{ width: '50px', height: '50px' }}>
+                          {step}
+                        </div>
+                        <div className="text-start">
+                          {step === 1 && <p className="mb-0">Sign Up</p>}
+                          {step === 2 && <p className="mb-0">Filter Drivers</p>}
+                          {step === 3 && <p className="mb-0">Book Driver</p>}
+                          {step === 4 && <p className="mb-0">Enjoy Ride</p>}
+                          {step === 5 && <p className="mb-0">Pay & Rate</p>}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* 5. Why Choose Our Drivers Section */}
+      <div className="row mb-5">
+        <div className="col-12">
+          <h2 className="text-center mb-4">Why Choose Our Drivers</h2>
+          <div className="row g-4">
+            <div className="col-6 col-md-3">
+              <AnimatedCard delay={0.1}>
+                <motion.div 
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  <motion.div 
+                    className="text-primary mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-shield-check fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Verified Professionals</h4>
+                  <p className="card-text">All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.</p>
+                </motion.div>
+              </AnimatedCard>
+            </div>
+            <div className="col-6 col-md-3">
+              <AnimatedCard delay={0.3}>
+                <motion.div 
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  <motion.div 
+                    className="text-success mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-currency-dollar fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Transparent Pricing</h4>
+                  <p className="card-text">Competitive pricing with no hidden fees. Know exactly what you'll pay before booking.</p>
+                </motion.div>
+              </AnimatedCard>
+            </div>
+            <div className="col-6 col-md-3">
+              <AnimatedCard delay={0.5}>
+                <motion.div 
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  <motion.div 
+                    className="text-info mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-clock-history fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">24/7 Availability</h4>
+                  <p className="card-text">Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use platform.</p>
+                </motion.div>
+              </AnimatedCard>
+            </div>
+            <div className="col-6 col-md-3">
+              <AnimatedCard delay={0.7}>
+                <motion.div 
+                  className="card h-100 border-0 shadow-sm text-center p-4"
+                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                  whileHover={{ 
+                    y: -10,
+                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                  }}
+                >
+                  <motion.div 
+                    className="text-warning mb-3"
+                    whileHover={{ rotate: 15, scale: 1.2 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <i className="bi bi-person-badge fs-1"></i>
+                  </motion.div>
+                  <h4 className="card-title">Experienced Drivers</h4>
+                  <p className="card-text">Professional, courteous drivers who prioritize your comfort and punctuality.</p>
+                </motion.div>
+              </AnimatedCard>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* 6. Book Your Driver Now Section */}
+      <div className="text-center py-5 mb-5">
+        <h2 className="mb-4">Ready to Experience the Best Ride Service?</h2>
+        <p className="lead mb-4">Join thousands of satisfied customers who have made RIDA their preferred transportation partner.</p>
+        <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
+          <motion.button 
+            className="btn btn-primary btn-lg fw-semibold px-4"
+            onClick={() => setCurrentPage('register')}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.3)"
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <i className="bi bi-person-plus me-2"></i> Book a Driver Now
+          </motion.button>
+          <motion.button 
+            className="btn btn-outline-primary btn-lg fw-semibold px-4"
+            onClick={() => setCurrentPage('login')}
+            whileHover={{ 
+              scale: 1.05,
+              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.1)"
+            }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <i className="bi bi-box-arrow-in-right me-2"></i> Sign In
+          </motion.button>
+        </div>
+      </div>
+      
       {/* Testimonials Section */}
       <div className="row mb-5">
         <div className="col-12">
@@ -1910,35 +2099,6 @@ const HomePage = ({ setCurrentPage, theme }) => {
           </div>
         </div>
       </div>
-      
-      {/* Call to Action */}
-      <div className="text-center py-5">
-        <h2 className="mb-4">Ready to Experience the Best Ride Service?</h2>
-        <div className="d-flex flex-column flex-sm-row justify-content-center gap-3">
-          <motion.button 
-            className="btn btn-primary btn-lg fw-semibold px-4"
-            onClick={() => setCurrentPage('register')}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.3)"
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <i className="bi bi-person-plus me-2"></i> Book a driver Now
-          </motion.button>
-          <motion.button 
-            className="btn btn-outline-primary btn-lg fw-semibold px-4"
-            onClick={() => setCurrentPage('login')}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.1)"
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <i className="bi bi-box-arrow-in-right me-2"></i> Sign In
-          </motion.button>
-        </div>
-      </div>
     </motion.div>
   );
 };
@@ -2035,10 +2195,11 @@ const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
   );
 };
 
-// Customer Dashboard Component - Fixed with single payment method
-const CustomerDashboard = ({ user, token, showMessage, theme }) => {
+// Customer Dashboard Component - Fixed with single payment method and driver filtering
+const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
   const [drivers, setDrivers] = useState([]);
+  const [filteredDrivers, setFilteredDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBookingInProgress, setIsBookingInProgress] = useState(false);
@@ -2047,16 +2208,33 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [showFareCalculator, setShowFareCalculator] = useState(false);
   const [activeBooking, setActiveBooking] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
   
   // Fixed payment method state to use the exact format backend expects
   const [bookingData, setBookingData] = useState({
     pickupAddress: '',
     dropoffAddress: '',
     scheduledTime: '',
-    bookingType: 'once',
+    vehicleType: '',
+    transmissionType: '',
+    distance: 0,
+    calculatedFare: 0,
     durationValue: 1,
     durationUnit: 'hours',
+    language: 'english',
     paymentMethod: "MomoPay Code 123456" // Only payment method allowed by backend
+  });
+  
+  // Driver filter state
+  const [filters, setFilters] = useState({
+    ageRange: '',
+    minExperience: '',
+    transmission: '',
+    vehicleType: '',
+    serviceArea: '',
+    timeAvailability: '',
+    serviceType: '',
+    language: ''
   });
   
   // Fetch available drivers
@@ -2079,6 +2257,7 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
       if (response.status === 404) {
         console.log('Drivers endpoint not found (404)');
         setDrivers([]);
+        setFilteredDrivers([]);
         setError('The drivers service is currently unavailable. Please try again later.');
         showMessage('Drivers service temporarily unavailable.', 'error');
         return;
@@ -2098,28 +2277,33 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
       if (data.msg && data.msg.includes('No drivers found')) {
         console.log('No drivers found in database');
         setDrivers([]); // Set empty array so the UI shows "No drivers available"
+        setFilteredDrivers([]);
         setError(null); // Clear any previous errors
         showMessage('No drivers are currently available in your area.', 'info');
       } else if (Array.isArray(data)) {
         // If data is an array of drivers, use it
         console.log('Found drivers array:', data.length);
         setDrivers(data);
+        setFilteredDrivers(data);
         setError(null);
       } else if (data.drivers && Array.isArray(data.drivers)) {
         // If data has a drivers property that's an array, use it
         console.log('Found drivers in data.drivers:', data.drivers.length);
         setDrivers(data.drivers);
+        setFilteredDrivers(data.drivers);
         setError(null);
       } else {
         // Fallback: unexpected response format
         console.log('Unexpected response format:', data);
         setDrivers([]);
+        setFilteredDrivers([]);
         setError('Unable to load drivers. Please try again.');
         showMessage('Unable to load drivers. Please try again.', 'error');
       }
     } catch (err) {
       console.error('Error fetching drivers:', err);
       setDrivers([]); // Set empty array on error
+      setFilteredDrivers([]);
       
       // More specific error handling
       if (err.name === 'TypeError' && err.message.includes('fetch')) {
@@ -2132,6 +2316,105 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
     } finally {
       setLoading(false);
     }
+  };
+  
+  // Apply filters when drivers or filter criteria change
+  useEffect(() => {
+    if (drivers.length === 0) {
+      setFilteredDrivers([]);
+      return;
+    }
+    
+    let result = [...drivers];
+    
+    // Apply age range filter
+    if (filters.ageRange) {
+      result = result.filter(driver => 
+        driver.ageRange === filters.ageRange
+      );
+    }
+    
+    // Apply minimum experience filter
+    if (filters.minExperience) {
+      result = result.filter(driver => {
+        const driverExp = parseInt(driver.yearsOfExperience) || 0;
+        const minExp = parseInt(filters.minExperience) || 0;
+        return driverExp >= minExp;
+      });
+    }
+    
+    // Apply transmission proficiency filter
+    if (filters.transmission) {
+      result = result.filter(driver => 
+        driver.transmissionProficiency === filters.transmission ||
+        driver.transmissionProficiency === 'both'
+      );
+    }
+    
+    // Apply vehicle type filter
+    if (filters.vehicleType) {
+      result = result.filter(driver => 
+        driver.vehicleTypesComfortable && 
+        driver.vehicleTypesComfortable.includes(filters.vehicleType)
+      );
+    }
+    
+    // Apply service area filter
+    if (filters.serviceArea) {
+      result = result.filter(driver => 
+        driver.preferredServiceAreas && 
+        driver.preferredServiceAreas.includes(filters.serviceArea)
+      );
+    }
+    
+    // Apply time availability filter
+    if (filters.timeAvailability) {
+      result = result.filter(driver => 
+        driver.timeAvailability === filters.timeAvailability ||
+        driver.timeAvailability === 'flexible'
+      );
+    }
+    
+    // Apply service type filter
+    if (filters.serviceType) {
+      result = result.filter(driver => 
+        driver.openToServices && 
+        driver.openToServices.includes(filters.serviceType)
+      );
+    }
+    
+    // Apply language filter
+    if (filters.language) {
+      result = result.filter(driver => 
+        driver.languagesSpoken && 
+        driver.languagesSpoken.includes(filters.language)
+      );
+    }
+    
+    setFilteredDrivers(result);
+  }, [drivers, filters]);
+  
+  // Handle filter input changes
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  // Reset all filters
+  const resetFilters = () => {
+    setFilters({
+      ageRange: '',
+      minExperience: '',
+      transmission: '',
+      vehicleType: '',
+      serviceArea: '',
+      timeAvailability: '',
+      serviceType: '',
+      language: ''
+    });
   };
   
   useEffect(() => {
@@ -2168,12 +2451,45 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
       ...prev,
       [name]: value
     }));
+    
+    // Calculate fare when distance changes
+    if (name === 'distance') {
+      const distanceValue = parseFloat(value) || 0;
+      let fare = 0;
+      
+      if (distanceValue <= 10) {
+        fare = 5000;
+      } else if (distanceValue <= 50) {
+        fare = 5000 + (distanceValue - 10) * 250;
+      } else {
+        fare = 5000 + (40 * 250) + ((distanceValue - 50) * 90);
+      }
+      
+      setBookingData(prev => ({
+        ...prev,
+        calculatedFare: fare
+      }));
+    }
   };
   
   // Open booking form for a specific driver
   const handleBookDriver = (driver) => {
     setSelectedDriver(driver);
     setShowBookingForm(true);
+    // Reset form data
+    setBookingData({
+      pickupAddress: '',
+      dropoffAddress: '',
+      scheduledTime: '',
+      vehicleType: '',
+      transmissionType: '',
+      distance: 0,
+      calculatedFare: 0,
+      durationValue: 1,
+      durationUnit: 'hours',
+      language: 'english',
+      paymentMethod: "MomoPay Code 123456"
+    });
   };
   
   // Fixed submitBooking function
@@ -2189,31 +2505,18 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
         throw new Error('Pickup address and scheduled time are required');
       }
       
-      // Calculate pricing based on driver's rate and booking duration
-      const hourlyRate = selectedDriver.pricing.hourlyRate;
-      const durationValue = parseInt(bookingData.durationValue);
+      // Calculate pricing based on distance
+      const distanceValue = parseFloat(bookingData.distance) || 0;
+      let baseAmount = 0;
       
-      // Convert duration to hours based on the unit
-      let hours;
-      switch (bookingData.durationUnit) {
-        case 'hours':
-          hours = durationValue;
-          break;
-        case 'days':
-          hours = durationValue * 24;
-          break;
-        case 'weeks':
-          hours = durationValue * 24 * 7;
-          break;
-        case 'months':
-          hours = durationValue * 24 * 30; // Approximation
-          break;
-        default:
-          hours = durationValue;
+      if (distanceValue <= 10) {
+        baseAmount = 5000;
+      } else if (distanceValue <= 50) {
+        baseAmount = 5000 + (distanceValue - 10) * 250;
+      } else {
+        baseAmount = 5000 + (40 * 250) + ((distanceValue - 50) * 90);
       }
       
-      // Calculate base amount and total amount
-      const baseAmount = hours * hourlyRate;
       const discount = 0; // No discount for now
       const tax = 0; // No tax for now
       const totalAmount = baseAmount - discount + tax;
@@ -2231,7 +2534,7 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
           coordinates: [-1.9441, 30.0619], // Default coordinates for Kigali
           address: bookingData.pickupAddress
         },
-        bookingType: bookingData.bookingType,
+        bookingType: 'once', // Default to one-time booking
         duration: {
           value: parseInt(bookingData.durationValue),
           unit: bookingData.durationUnit
@@ -2246,7 +2549,7 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
           tax: tax,
           totalAmount: totalAmount
         },
-        notes: bookingData.notes || ''
+        notes: `Vehicle Type: ${bookingData.vehicleType}, Transmission: ${bookingData.transmissionType}, Language: ${bookingData.language}`
       };
       
       // Add dropoff location only if provided
@@ -2300,17 +2603,6 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
       console.log('Booking successful:', data);
       showMessage('Booking created successfully!', 'success');
       setShowBookingForm(false);
-      
-      // Reset form
-      setBookingData({
-        pickupAddress: '',
-        dropoffAddress: '',
-        scheduledTime: '',
-        bookingType: 'once',
-        durationValue: 1,
-        durationUnit: 'hours',
-        paymentMethod: "MomoPay Code 123456" // Reset to the only allowed payment method
-      });
       
       // Refresh drivers list
       fetchDrivers();
@@ -2366,8 +2658,183 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
             <i className="bi bi-calculator me-1"></i> 
             {showFareCalculator ? 'Hide' : 'Show'} Calculator
           </motion.button>
+          <motion.button 
+            className="btn btn-primary"
+            onClick={() => setShowFilters(!showFilters)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <i className="bi bi-funnel me-1"></i> 
+            {showFilters ? 'Hide' : 'Show'} Filters
+          </motion.button>
         </div>
       </div>
+      
+      {/* Filters Panel */}
+      {showFilters && (
+        <motion.div 
+          className="card border-0 shadow-sm mb-4"
+          style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+        >
+          <div className="card-body p-3 p-md-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h3 className="h5 mb-0">Filter Drivers</h3>
+              <button 
+                className="btn btn-sm btn-outline-secondary"
+                onClick={resetFilters}
+              >
+                Reset Filters
+              </button>
+            </div>
+            
+            <div className="row g-3">
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Age Range</label>
+                <select 
+                  className="form-select" 
+                  name="ageRange"
+                  value={filters.ageRange}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Age</option>
+                  <option value="20-30">20-30</option>
+                  <option value="30-40">30-40</option>
+                  <option value="40+">40+</option>
+                </select>
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Minimum Experience (years)</label>
+                <input 
+                  type="number" 
+                  className="form-control" 
+                  name="minExperience"
+                  value={filters.minExperience}
+                  onChange={handleFilterChange}
+                  min="0"
+                  placeholder="e.g. 2"
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                />
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Transmission</label>
+                <select 
+                  className="form-select" 
+                  name="transmission"
+                  value={filters.transmission}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Transmission</option>
+                  <option value="manual">Manual</option>
+                  <option value="automatic">Automatic</option>
+                  <option value="both">Both</option>
+                </select>
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Vehicle Type</label>
+                <select 
+                  className="form-select" 
+                  name="vehicleType"
+                  value={filters.vehicleType}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Vehicle</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="suv">SUV</option>
+                  <option value="van">Van</option>
+                  <option value="pickup">Pickup</option>
+                  <option value="luxury">Luxury</option>
+                </select>
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Service Area</label>
+                <select 
+                  className="form-select" 
+                  name="serviceArea"
+                  value={filters.serviceArea}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Area</option>
+                  <option value="kigali">Kigali</option>
+                  <option value="outsideKigali">Outside Kigali</option>
+                  <option value="nationwide">Nationwide</option>
+                </select>
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Time Availability</label>
+                <select 
+                  className="form-select" 
+                  name="timeAvailability"
+                  value={filters.timeAvailability}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Time</option>
+                  <option value="day">Day</option>
+                  <option value="night">Night</option>
+                  <option value="flexible">Flexible</option>
+                </select>
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Service Type</label>
+                <select 
+                  className="form-select" 
+                  name="serviceType"
+                  value={filters.serviceType}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Service</option>
+                  <option value="shortTrips">Short Trips</option>
+                  <option value="longTrips">Long Trips</option>
+                  <option value="events">Events</option>
+                  <option value="tours">Tours</option>
+                </select>
+              </div>
+              
+              <div className="col-md-6 col-lg-4">
+                <label className="form-label fw-semibold">Language</label>
+                <select 
+                  className="form-select" 
+                  name="language"
+                  value={filters.language}
+                  onChange={handleFilterChange}
+                  style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                >
+                  <option value="">Any Language</option>
+                  <option value="english">English</option>
+                  <option value="kinyarwanda">Kinyarwanda</option>
+                  <option value="french">French</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="mt-3 d-flex justify-content-between align-items-center">
+              <div className="text-muted">
+                {filteredDrivers.length} of {drivers.length} drivers match your filters
+              </div>
+              <button 
+                className="btn btn-primary"
+                onClick={() => setShowFilters(false)}
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
       
       {/* Fare Calculator */}
       {showFareCalculator && (
@@ -2463,8 +2930,8 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
               </div>
             </div>
           </div>
-        ) : drivers.length > 0 ? (
-          drivers.map((driver, index) => (
+        ) : filteredDrivers.length > 0 ? (
+          filteredDrivers.map((driver, index) => (
             <div key={driver._id} className="col-12 col-md-6 col-lg-4">
               <AnimatedCard delay={index * 0.1}>
                 <DriverCard 
@@ -2483,11 +2950,28 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
                 <div className="mb-4">
                   <i className="bi bi-car-front text-muted" style={{fontSize: '4rem'}}></i>
                 </div>
-                <h4 className="text-muted mb-3">No Drivers Available</h4>
-                <p className="text-muted">There are currently no drivers available in your area. Please check back later.</p>
+                <h4 className="text-muted mb-3">
+                  {drivers.length > 0 ? 'No drivers match your filters' : 'No Drivers Available'}
+                </h4>
+                <p className="text-muted">
+                  {drivers.length > 0 
+                    ? 'Try adjusting your filter criteria to see more results.'
+                    : 'There are currently no drivers available in your area. Please check back later.'
+                  }
+                </p>
+                {drivers.length > 0 && (
+                  <motion.button 
+                    onClick={resetFilters} 
+                    className="btn btn-outline-primary mt-3"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Clear Filters
+                  </motion.button>
+                )}
                 <motion.button 
                   onClick={handleRetry} 
-                  className="btn btn-outline-primary mt-3"
+                  className="btn btn-outline-primary mt-3 ms-2"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -2516,8 +3000,9 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
               </div>
               <div className="modal-body">
                 <form>
+                  {/* 1. Pickup Address */}
                   <div className="mb-3">
-                    <label className="form-label">Pickup Address</label>
+                    <label className="form-label fw-semibold">1. Pickup Address</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -2525,11 +3010,14 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
                       value={bookingData.pickupAddress}
                       onChange={handleBookingInputChange}
                       required
+                      placeholder="Enter pickup location"
                       style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                     />
                   </div>
+                  
+                  {/* 2. Pickup Time */}
                   <div className="mb-3">
-                    <label className="form-label">Pickup Time</label>
+                    <label className="form-label fw-semibold">2. Pickup Time</label>
                     <input 
                       type="datetime-local" 
                       className="form-control" 
@@ -2541,39 +3029,84 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
                       style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                     />
                   </div>
+                  
+                  {/* 3. Vehicle Type */}
                   <div className="mb-3">
-                    <label className="form-label">Dropoff Address (Optional)</label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      name="dropoffAddress"
-                      value={bookingData.dropoffAddress}
-                      onChange={handleBookingInputChange}
-                      style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Booking Type</label>
+                    <label className="form-label fw-semibold">3. Vehicle Type</label>
                     <select 
                       className="form-select" 
-                      name="bookingType"
-                      value={bookingData.bookingType}
+                      name="vehicleType"
+                      value={bookingData.vehicleType}
                       onChange={handleBookingInputChange}
+                      required
                       style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                     >
-                      <option value="once">Once</option>
-                      
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
+                      <option value="">Select vehicle type</option>
+                      <option value="sedan">Sedan</option>
+                      <option value="suv">SUV</option>
+                      <option value="van">Van</option>
+                      <option value="pickup">Pickup</option>
+                      <option value="luxury">Luxury</option>
                     </select>
                   </div>
                   
-                  {/* Only show duration fields if booking type is not "once" */}
-                  {bookingData.bookingType !== 'once' && (
-                    <div className="row mb-3">
-                      <div className="col">
-                        <label className="form-label">Duration</label>
+                  {/* 4. Transmission Type */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">4. Transmission Type</label>
+                    <select 
+                      className="form-select" 
+                      name="transmissionType"
+                      value={bookingData.transmissionType}
+                      onChange={handleBookingInputChange}
+                      required
+                      style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                    >
+                      <option value="">Select transmission type</option>
+                      <option value="manual">Manual</option>
+                      <option value="automatic">Automatic</option>
+                      <option value="both">Both</option>
+                    </select>
+                  </div>
+                  
+                  {/* 5. Distance and Dropoff Address */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">5. Destination & Distance</label>
+                    <input 
+                      type="text" 
+                      className="form-control mb-2" 
+                      name="dropoffAddress"
+                      value={bookingData.dropoffAddress}
+                      onChange={handleBookingInputChange}
+                      placeholder="Enter destination address"
+                      style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                    />
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        className="form-control"
+                        name="distance"
+                        value={bookingData.distance}
+                        onChange={handleBookingInputChange}
+                        placeholder="Distance in km"
+                        min="0"
+                        step="0.1"
+                        style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                      />
+                      <span className="input-group-text">km</span>
+                    </div>
+                    {bookingData.distance > 0 && (
+                      <div className="mt-2 alert alert-info">
+                        <i className="bi bi-info-circle me-2"></i>
+                        Estimated Fare: <strong>{bookingData.calculatedFare.toLocaleString()} RWF</strong>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* 6. Duration */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">6. Duration</label>
+                    <div className="row g-2">
+                      <div className="col-8">
                         <input 
                           type="number" 
                           className="form-control" 
@@ -2585,8 +3118,7 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
                           style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                         />
                       </div>
-                      <div className="col">
-                        <label className="form-label">Unit</label>
+                      <div className="col-4">
                         <select 
                           className="form-select" 
                           name="durationUnit"
@@ -2597,14 +3129,30 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
                           <option value="hours">Hours</option>
                           <option value="days">Days</option>
                           <option value="weeks">Weeks</option>
-                          <option value="months">Months</option>
                         </select>
                       </div>
                     </div>
-                  )}
+                  </div>
+                  
+                  {/* 7. Language */}
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold">7. Preferred Language</label>
+                    <select 
+                      className="form-select" 
+                      name="language"
+                      value={bookingData.language}
+                      onChange={handleBookingInputChange}
+                      required
+                      style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                    >
+                      <option value="english">English</option>
+                      <option value="kinyarwanda">Kinyarwanda</option>
+                      <option value="french">French</option>
+                    </select>
+                  </div>
                   
                   <div className="mb-3">
-                    <label className="form-label">Payment Method</label>
+                    <label className="form-label fw-semibold">Payment Method</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -2614,17 +3162,6 @@ const CustomerDashboard = ({ user, token, showMessage, theme }) => {
                       style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                     />
                     <small className="text-muted">Payment method is fixed to MomoPay Code 123456</small>
-                  </div>
-                  <div>
-                    <h6>If you want to know how much you will pay, use our fare calculator:
-                      <button 
-                        type="button"
-                        className="btn btn-sm btn-info ms-2"
-                        onClick={() => setShowFareCalculator(true)}
-                      >
-                        <i className="bi bi-calculator"></i> Open Calculator
-                      </button>
-                    </h6>
                   </div>
                 </form>
               </div>
@@ -3358,12 +3895,21 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
       make: '',
       model: '',
       licensePlate: '',
-      color: '', // Added color field
+      color: '',
     },
     pricing: {
       hourlyRate: 0,
     },
     bio: '',
+    // New driver profile fields
+    ageRange: '',
+    yearsOfExperience: '',
+    transmissionProficiency: 'both',
+    vehicleTypesComfortable: [],
+    preferredServiceAreas: ['kigali'],
+    timeAvailability: 'flexible',
+    openToServices: ['shortTrips'],
+    languagesSpoken: ['english', 'kinyarwanda']
   });
   const [loading, setLoading] = useState(false);
   
@@ -3383,6 +3929,19 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
         [name]: value,
       }
     }));
+  };
+  
+  // Handler for array fields (checkboxes)
+  const handleArrayChange = (e, field) => {
+    const { value, checked } = e.target;
+    setFormData(prev => {
+      const currentValues = prev[field];
+      if (checked) {
+        return { ...prev, [field]: [...currentValues, value] };
+      } else {
+        return { ...prev, [field]: currentValues.filter(v => v !== value) };
+      }
+    });
   };
   
   const handleSubmit = async (e) => {
@@ -3407,11 +3966,21 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
         payload.vehicle = {
           make: formData.vehicle.make.trim(),
           model: formData.vehicle.model.trim(),
-          licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(), // Normalize license plate
+          licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(),
           color: formData.vehicle.color.trim(),
         };
         payload.pricing = formData.pricing;
         payload.bio = formData.bio.trim();
+        
+        // Add new driver profile fields
+        payload.ageRange = formData.ageRange;
+        payload.yearsOfExperience = formData.yearsOfExperience;
+        payload.transmissionProficiency = formData.transmissionProficiency;
+        payload.vehicleTypesComfortable = formData.vehicleTypesComfortable;
+        payload.preferredServiceAreas = formData.preferredServiceAreas;
+        payload.timeAvailability = formData.timeAvailability;
+        payload.openToServices = formData.openToServices;
+        payload.languagesSpoken = formData.languagesSpoken;
       }
       
       console.log('Final payload being sent:', payload); // Debug log
@@ -3534,8 +4103,46 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
             <hr className="my-3"/>
             <h4 className="h5 fw-bold mb-3">Driver Details</h4>
             
+            {/* Basic Information */}
+            <div className="row g-3">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label className="form-label fw-semibold">Age Range</label>
+                  <select
+                    name="ageRange"
+                    value={formData.ageRange}
+                    onChange={handleChange}
+                    className="form-select rounded-3"
+                    required
+                    style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                  >
+                    <option value="">Select age range</option>
+                    <option value="20-30">20-30</option>
+                    <option value="30-40">30-40</option>
+                    <option value="40+">40+</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label className="form-label fw-semibold">Years of Experience</label>
+                  <input
+                    type="number"
+                    name="yearsOfExperience"
+                    value={formData.yearsOfExperience}
+                    onChange={handleChange}
+                    className="form-control rounded-3"
+                    min="1"
+                    required
+                    style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                  />
+                </div>
+              </div>
+            </div>
+            
             {/* Vehicle Information Section */}
-            <h5 className="h6 fw-semibold mb-2 text-muted">Vehicle Information</h5>
+            <h5 className="h6 fw-semibold mb-2 text-muted mt-3">Vehicle Information</h5>
             <div className="row g-3">
               <div className="col-md-6">
                 <div className="form-group">
@@ -3567,9 +4174,6 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
                   />
                 </div>
               </div>
-            </div>
-            
-            <div className="row g-3">
               <div className="col-md-6">
                 <div className="form-group">
                   <label className="form-label fw-semibold">License Plate</label>
@@ -3580,8 +4184,8 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
                     onChange={(e) => handleNestedChange(e, 'vehicle')}
                     className="form-control rounded-3"
                     placeholder="e.g., RAD015F"
-                    style={{ textTransform: 'uppercase', backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                     required
+                    style={{ textTransform: 'uppercase', backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                   />
                 </div>
               </div>
@@ -3603,7 +4207,7 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
             </div>
             
             {/* Pricing Section */}
-            <h5 className="h6 fw-semibold mb-2 text-muted mt-4">Pricing</h5>
+            <h5 className="h6 fw-semibold mb-2 text-muted mt-3">Pricing</h5>
             <div className="form-group">
               <label className="form-label fw-semibold">Hourly Rate ($)</label>
               <input
@@ -3620,8 +4224,146 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
               />
             </div>
             
+            {/* Driver Preferences Section */}
+            <h5 className="h6 fw-semibold mb-2 text-muted mt-3">Driver Preferences</h5>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label className="form-label fw-semibold">Transmission Proficiency</label>
+                  <select
+                    name="transmissionProficiency"
+                    value={formData.transmissionProficiency}
+                    onChange={handleChange}
+                    className="form-select rounded-3"
+                    required
+                    style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                  >
+                    <option value="manual">Manual</option>
+                    <option value="automatic">Automatic</option>
+                    <option value="both">Both</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label className="form-label fw-semibold">Time Availability</label>
+                  <select
+                    name="timeAvailability"
+                    value={formData.timeAvailability}
+                    onChange={handleChange}
+                    className="form-select rounded-3"
+                    required
+                    style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+                  >
+                    <option value="day">Day</option>
+                    <option value="night">Night</option>
+                    <option value="flexible">Flexible</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            {/* Vehicle Types Comfortable */}
+            <div className="form-group mt-3">
+              <label className="form-label fw-semibold">Vehicle Types Comfortable</label>
+              <div className="row g-2">
+                {['sedan', 'suv', 'van', 'pickup', 'luxury'].map(type => (
+                  <div key={type} className="col-md-4 col-6">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`vehicle-${type}`}
+                        value={type}
+                        checked={formData.vehicleTypesComfortable.includes(type)}
+                        onChange={(e) => handleArrayChange(e, 'vehicleTypesComfortable')}
+                      />
+                      <label className="form-check-label" htmlFor={`vehicle-${type}`}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Service Areas */}
+            <div className="form-group mt-3">
+              <label className="form-label fw-semibold">Preferred Service Areas</label>
+              <div className="row g-2">
+                {['kigali', 'outsideKigali', 'nationwide'].map(area => (
+                  <div key={area} className="col-md-4">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`area-${area}`}
+                        value={area}
+                        checked={formData.preferredServiceAreas.includes(area)}
+                        onChange={(e) => handleArrayChange(e, 'preferredServiceAreas')}
+                      />
+                      <label className="form-check-label" htmlFor={`area-${area}`}>
+                        {area === 'kigali' ? 'Kigali' : area === 'outsideKigali' ? 'Outside Kigali' : 'Nationwide'}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Open To Services */}
+            <div className="form-group mt-3">
+              <label className="form-label fw-semibold">Open To Services</label>
+              <div className="row g-2">
+                {['shortTrips', 'longTrips', 'events', 'tours'].map(service => (
+                  <div key={service} className="col-md-6">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`service-${service}`}
+                        value={service}
+                        checked={formData.openToServices.includes(service)}
+                        onChange={(e) => handleArrayChange(e, 'openToServices')}
+                      />
+                      <label className="form-check-label" htmlFor={`service-${service}`}>
+                        {service === 'shortTrips' ? 'Short Trips' : 
+                         service === 'longTrips' ? 'Long Trips' : 
+                         service === 'events' ? 'Events' : 'Tours'}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Languages Spoken */}
+            <div className="form-group mt-3">
+              <label className="form-label fw-semibold">Languages Spoken</label>
+              <div className="row g-2">
+                {['english', 'kinyarwanda', 'french'].map(lang => (
+                  <div key={lang} className="col-md-4">
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`lang-${lang}`}
+                        value={lang}
+                        checked={formData.languagesSpoken.includes(lang)}
+                        onChange={(e) => handleArrayChange(e, 'languagesSpoken')}
+                      />
+                      <label className="form-check-label" htmlFor={`lang-${lang}`}>
+                        {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
             {/* Bio Section */}
-            <div className="form-group">
+            <div className="form-group mt-3">
               <label className="form-label fw-semibold">Short Bio</label>
               <textarea
                 name="bio"
