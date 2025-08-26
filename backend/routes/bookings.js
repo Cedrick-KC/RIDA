@@ -103,20 +103,39 @@ router.post('/', [
         
         const totalAmount = baseAmount; // No discount or tax for now
         
+        // Prepare pickup location object
+        let pickupLocationObj = {
+            type: 'Point',
+            coordinates: [-1.9441, 30.0619], // Default to Kigali coordinates
+            address: typeof pickupLocation === 'string' ? pickupLocation : pickupLocation.address
+        };
+        
+        // Handle coordinates if provided in pickupLocation
+        if (pickupLocation && typeof pickupLocation === 'object' && pickupLocation.coordinates) {
+            pickupLocationObj.coordinates = pickupLocation.coordinates;
+        }
+        
+        // Prepare dropoff location object (optional)
+        let dropoffLocationObj = undefined;
+        if (dropoffLocation) {
+            dropoffLocationObj = {
+                type: 'Point',
+                coordinates: [-1.9441, 30.0619], // Default to Kigali coordinates
+                address: typeof dropoffLocation === 'string' ? dropoffLocation : dropoffLocation.address
+            };
+            
+            // Handle coordinates if provided in dropoffLocation
+            if (typeof dropoffLocation === 'object' && dropoffLocation.coordinates) {
+                dropoffLocationObj.coordinates = dropoffLocation.coordinates;
+            }
+        }
+        
         // Create the booking
         const newBooking = new Booking({
             customer: req.user.id,
             driver: driverId,
-            pickupLocation: {
-                type: 'Point',
-                coordinates: [-1.9441, 30.0619], // Default to Kigali coordinates
-                address: pickupLocation.address || pickupLocation
-            },
-            dropoffLocation: dropoffLocation ? {
-                type: 'Point',
-                coordinates: [-1.9441, 30.0619], // Default to Kigali coordinates
-                address: dropoffLocation
-            } : undefined,
+            pickupLocation: pickupLocationObj,
+            dropoffLocation: dropoffLocationObj,
             bookingType,
             duration,
             scheduledTime: startTime,
