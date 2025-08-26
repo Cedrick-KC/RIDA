@@ -190,6 +190,9 @@ router.post('/register', [
 // @route   POST api/auth/login
 // @desc    Authenticate user & get token
 // @access  Public
+// @route   POST api/auth/login
+// @desc    Authenticate user & get token
+// @access  Public
 router.post('/login', [
     body('email', 'Please include a valid email').isEmail(),
     body('password', 'Password is required').exists(),
@@ -202,17 +205,25 @@ router.post('/login', [
     const { email, password } = req.body;
     
     try {
+        console.log('Login attempt for email:', email);
+        
         // Find user by email (case insensitive)
         let user = await User.findOne({ email: email.toLowerCase().trim() });
         if (!user) {
+            console.log('User not found with email:', email);
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
+        
+        console.log('User found:', user._id, user.name);
         
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            console.log('Password mismatch for user:', email);
             return res.status(400).json({ msg: 'Invalid credentials' });
         }
+        
+        console.log('Password matched for user:', email);
         
         // Generate JWT token
         const payload = {
@@ -247,9 +258,16 @@ router.post('/login', [
             }
         );
     } catch (err) {
-        console.error('Login error:', err.message);
+        console.error('Login error:', err);
+        console.error('Error stack:', err.stack);
+        
+        // Send more detailed error in development
+        const errorMessage = process.env.NODE_ENV === 'development' 
+            ? `Server Error during login: ${err.message}` 
+            : 'Server Error during login';
+            
         res.status(500).json({ 
-            msg: 'Server Error during login',
+            msg: errorMessage,
             error: process.env.NODE_ENV === 'development' ? err.message : undefined
         });
     }
