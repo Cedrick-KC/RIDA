@@ -157,7 +157,22 @@ const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, 
         <motion.a 
           className="navbar-brand fw-bold d-flex align-items-center" 
           href="#" 
-          onClick={() => setCurrentPage('home')}
+          onClick={(e) => {
+            e.preventDefault();
+            if (user) {
+              // If user is logged in, redirect to their dashboard
+              if (user.userType === 'admin') {
+                setCurrentPage('adminDashboard');
+              } else if (user.userType === 'customer') {
+                setCurrentPage('customerDashboard');
+              } else if (user.userType === 'driver') {
+                setCurrentPage('driverDashboard');
+              }
+            } else {
+              // If no user is logged in, go to home page
+              setCurrentPage('home');
+            }
+          }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -182,7 +197,22 @@ const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, 
         <div className={`collapse navbar-collapse ${sidebarCollapsed ? '' : 'show'}`} id="navbarNav">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <button className="nav-link btn btn-link" onClick={() => setCurrentPage('home')}>
+              <button className="nav-link btn btn-link" onClick={(e) => {
+                e.preventDefault();
+                if (user) {
+                  // If user is logged in, redirect to their dashboard
+                  if (user.userType === 'admin') {
+                    setCurrentPage('adminDashboard');
+                  } else if (user.userType === 'customer') {
+                    setCurrentPage('customerDashboard');
+                  } else if (user.userType === 'driver') {
+                    setCurrentPage('driverDashboard');
+                  }
+                } else {
+                  // If no user is logged in, go to home page
+                  setCurrentPage('home');
+                }
+              }}>
                 <i className="bi bi-house-door me-1"></i> Home
               </button>
             </li>
@@ -805,7 +835,7 @@ const App = () => {
         case 'adminDashboard':
           return <AdminDashboard user={user} token={token} showMessage={showMessage} theme={theme} />;
         case 'customerDashboard':
-          return <CustomerDashboard user={user} token={token} showMessage={showMessage} theme={theme} />;
+          return <CustomerDashboard user={user} token={token} showMessage={showMessage} setCurrentPage={setCurrentPage} theme={theme} />;
         case 'driverDashboard':
           return <DriverDashboard user={user} token={token} showMessage={showMessage} theme={theme} />;
         case 'fareCalculator':
@@ -830,7 +860,7 @@ const App = () => {
           if (user.userType === 'admin') {
             return <AdminDashboard user={user} token={token} showMessage={showMessage} theme={theme} />;
           } else if (user.userType === 'customer') {
-            return <CustomerDashboard user={user} token={token} showMessage={showMessage} theme={theme} />;
+            return <CustomerDashboard user={user} token={token} showMessage={showMessage} setCurrentPage={setCurrentPage} theme={theme} />;
           } else {
             return <DriverDashboard user={user} token={token} showMessage={showMessage} theme={theme} />;
           }
