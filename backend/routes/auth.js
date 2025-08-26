@@ -59,6 +59,13 @@ router.post('/register', [
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
         
+        // Verify password was hashed correctly
+        if (!user.password) {
+            throw new Error('Failed to hash password');
+        }
+        
+        console.log('✅ Password hashed successfully');
+        
         // Save user first
         await user.save();
         console.log(`✅ User created: ${user.name} (${user.email})`);
@@ -190,9 +197,6 @@ router.post('/register', [
 // @route   POST api/auth/login
 // @desc    Authenticate user & get token
 // @access  Public
-// @route   POST api/auth/login
-// @desc    Authenticate user & get token
-// @access  Public
 router.post('/login', [
     body('email', 'Please include a valid email').isEmail(),
     body('password', 'Password is required').exists(),
@@ -215,138 +219,3 @@ router.post('/login', [
         }
         
         console.log('User found:', user._id, user.name);
-        
-        // Check password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            console.log('Password mismatch for user:', email);
-            return res.status(400).json({ msg: 'Invalid credentials' });
-        }
-        
-        console.log('Password matched for user:', email);
-        
-        // Generate JWT token
-        const payload = {
-            user: {
-                id: user.id,
-                userType: user.userType,
-            },
-        };
-        
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET || 'supersecretkey',
-            { expiresIn: '24h' },
-            (err, token) => {
-                if (err) {
-                    console.error('JWT signing error:', err);
-                    throw err;
-                }
-                
-                console.log(`✅ User logged in: ${user.name} (${user.email})`);
-                
-                res.json({ 
-                    token, 
-                    user: {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email,
-                        userType: user.userType,
-                        phone: user.phone
-                    }
-                });
-            }
-        );
-    } catch (err) {
-        console.error('Login error:', err);
-        console.error('Error stack:', err.stack);
-        
-        // Send more detailed error in development
-        const errorMessage = process.env.NODE_ENV === 'development' 
-            ? `Server Error during login: ${err.message}` 
-            : 'Server Error during login';
-            
-        res.status(500).json({ 
-            msg: errorMessage,
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
-        });
-    }
-});
-
-// @route   GET api/auth/me
-// @desc    Get current user
-// @access  Private
-router.get('/me', auth, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('-password');
-        if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
-        }
-        
-        res.json(user);
-    } catch (err) {
-        console.error('Get user error:', err.message);
-        res.status(500).json({ 
-            msg: 'Server Error',
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
-        });
-    }
-});
-
-// @route   POST api/auth/create-admin
-// @desc    Create a new admin user using a common secret password
-// @access  Public (but secured by a secret)
-router.post(
-    '/create-admin',
-    [
-        body('name', 'Name is required').not().isEmpty(),
-        body('email', 'Please include a valid email').isEmail(),
-        body('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
-        body('phone', 'Phone number is required').not().isEmpty(),
-        body('adminSecret', 'Admin secret is required').not().isEmpty(),
-    ],
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        
-        const { name, email, password, phone, adminSecret } = req.body;
-        
-        try {
-            // 1. Validate the admin secret
-            if (adminSecret !== process.env.ADMIN_SECRET) {
-                return res.status(401).json({ msg: 'Unauthorized: Invalid admin secret' });
-            }
-            
-            // 2. Check if a user with this email already exists
-            const normalizedEmail = email.toLowerCase().trim();
-            let user = await User.findOne({ email: normalizedEmail });
-            if (user) {
-                return res.status(400).json({ msg: 'User with this email already exists' });
-            }
-            
-            // 3. Hash the password
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-            
-            // 4. Create the new admin user
-            user = new User({
-                name: name.trim(),
-                email: normalizedEmail,
-                password: hashedPassword,
-                phone: phone.trim(),
-                userType: 'admin',
-                isVerified: true, // Admins should be auto-verified
-            });
-            
-            await user.save();
-            res.status(201).json({ msg: 'Admin user created successfully' });
-        } catch (err) {
-            console.error('Admin creation error:', err);
-            res.status(500).json({ msg: 'Server Error', error: err.message });
-        }
-    }
-);
-
-module.exports = router;
