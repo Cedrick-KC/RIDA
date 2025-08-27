@@ -517,6 +517,78 @@ const Notification = ({ message, type, visible, onClose }) => {
   );
 };
 
+// Driver Price Calculator Component
+const DriverPriceCalculator = ({ theme }) => {
+  const colors = themeColors[theme];
+  const [days, setDays] = useState('');
+  const [price, setPrice] = useState(null);
+  
+  const calculatePrice = () => {
+    const daysValue = parseInt(days);
+    
+    if (isNaN(daysValue) || daysValue < 1) {
+      setPrice("Please enter a valid number of days.");
+      return;
+    }
+    
+    let calculatedPrice = 0;
+    if (daysValue === 1) {
+      calculatedPrice = 15000;
+    } else {
+      calculatedPrice = daysValue * 10000;
+    }
+    
+    setPrice(`Total Price: ${calculatedPrice.toLocaleString()} RWF`);
+  };
+  
+  return (
+    <motion.div 
+      className="card border-0 shadow-sm mb-4"
+      style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+    >
+      <div className="card-body p-3 p-md-4">
+        <h3 className="h5 mb-3 text-center" style={{ color: colors.primary }}>Driver Price Calculator</h3>
+        <div className="row justify-content-center">
+          <div className="col-md-8">
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Enter number of days:</label>
+              <input
+                type="number"
+                className="form-control"
+                id="days"
+                min="1"
+                placeholder="e.g. 3"
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+                style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
+              />
+            </div>
+            <motion.button 
+              className="btn w-100 py-2 fw-semibold rounded-3 shadow-sm"
+              style={{ backgroundColor: colors.primary, color: '#fff' }}
+              onClick={calculatePrice}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              Calculate
+            </motion.button>
+            {price && (
+              <div className="mt-3 text-center">
+                <div className="result fw-bold" style={{ color: colors.text, fontSize: '1.1rem' }}>
+                  {price}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 // Fare Calculator Page Component - Customer Only
 const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
@@ -1680,24 +1752,21 @@ const HomePage = ({ setCurrentPage, theme }) => {
             <div className="card-body p-3 p-md-4">
               <div className="row align-items-center">
                 <div className="col-md-6 mb-4 mb-md-0">
-                  <h3 className="card-title">Your Trusted Transportation Partner</h3>
+                  <h3 className="card-title">We’re not another ride service.</h3>
                   <p className="card-text">
-                    RIDA is a premier ride-booking platform catering for different ride scenarios like:
+                    We’re the service that gives you a driver for your own car or your journey.
                   </p>
-                  <ul>
-                    <li>After drinks or Night Events: Enjoy yourself without worry. After drinks at the bar or an event we'll get you and your car safely</li>
-                    <li>Long trips outside Kigali: Heading outside Kigali? Our experienced drivers ensure safe, comfortable journeys at fair, distance-based rates</li>
-                    <li>Family and Special Events: From weddings to family outings, corporate events to casual rides, we provide drivers who adapt to your needs</li>
-                    <li>Tourist and Diaspora clients: Discover Rwanda with a trusted driver who's also your local guide - fluent in the roads, communities, attractions, and experiences</li>
-                  </ul>
                   <p className="card-text">
-                    <h4>How it Works</h4>
-                    <ul>
-                      <li>Book a driver (Online or call)</li>
-                      <li>We send a Professional Driver to your location</li>
-                      <li>Enjoy your ride</li>
-                      <li>Pay predictable fees</li>
-                    </ul>
+                    Need a safe driver after drinks, someone to take you out of town, a family driver, a driver for events and other occasions, or even a driver who doubles as a guide while visiting Rwanda?
+                  </p>
+                  <p className="card-text">
+                    That’s exactly what we do.
+                  </p>
+                  <p className="card-text fw-bold">
+                    Simple. Reliable. Professional.
+                  </p>
+                  <p className="card-text">
+                    Your driver, whenever you need one.
                   </p>
                 </div>
                 <div className="col-md-6 text-center">
@@ -2695,7 +2764,7 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
             whileTap={{ scale: 0.95 }}
           >
             <i className="bi bi-funnel me-1"></i> 
-            {showFilters ? 'Hide' : 'Show'} Filters
+            {showFilters ? 'Hide' : 'Get your desired driver'}
           </motion.button>
         </div>
       </div>
@@ -2866,69 +2935,9 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
         </motion.div>
       )}
       
-      {/* Fare Calculator */}
+      {/* Driver Price Calculator */}
       {showFareCalculator && (
-        <motion.div 
-          className="card border-0 shadow-sm mb-4"
-          style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-        >
-          <div className="card-body p-3 p-md-4">
-            <h3 className="h5 mb-3">Fare Calculator</h3>
-            <div className="row">
-              <div className="col-md-6">
-                <div className="mb-3">
-                  <label className="form-label fw-semibold">Distance (km)</label>
-                  <div className="input-group">
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Enter distance in km"
-                      id="fareDistance"
-                      style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
-                    />
-                    <motion.button 
-                      className="btn btn-primary"
-                      type="button"
-                      onClick={() => {
-                        const distance = parseFloat(document.getElementById('fareDistance').value);
-                        if (isNaN(distance) || distance <= 0) {
-                          showMessage('Please enter a valid distance.', 'error');
-                          return;
-                        }
-                        
-                        let fare = 0;
-                        if (distance <= 10) {
-                          fare = 5000;
-                        } else if (distance <= 50) {
-                          fare = 5000 + (distance - 10) * 250;
-                        } else {
-                          fare = 5000 + (40 * 250) + ((distance - 50) * 90);
-                        }
-                        
-                        showMessage(`Estimated Fare: ${fare.toLocaleString()} RWF`, 'info');
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Calculate
-                    </motion.button>
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <small className="text-muted">
-                    <strong>Fare Structure:</strong><br />
-                    First 10 km: 5,000 RWF (flat rate)<br />
-                    10-50 km: 250 RWF per additional km<br />
-                    Above 50 km: 90 RWF per additional km
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        <DriverPriceCalculator theme={theme} />
       )}
       
       {/* Error State */}
