@@ -3,13 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-
 console.log('=== DEBUGGING ENVIRONMENT VARIABLES ===');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 console.log('All REACT_APP vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')));
 console.log('============================================');
-
 // Animation variants
 const pageTransition = {
   initial: { opacity: 0, y: 20 },
@@ -17,7 +15,6 @@ const pageTransition = {
   exit: { opacity: 0, y: -20 },
   transition: { duration: 0.3 }
 };
-
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -29,7 +26,6 @@ const cardVariants = {
     },
   },
 };
-
 const hoverVariants = {
   rest: { scale: 1, y: 0 },
   hover: { 
@@ -38,7 +34,6 @@ const hoverVariants = {
     transition: { duration: 0.2, ease: "easeOut" }
   }
 };
-
 const pulseVariants = {
   rest: { scale: 1 },
   hover: { 
@@ -50,7 +45,6 @@ const pulseVariants = {
     }
   }
 };
-
 // Theme-aware color constants
 const themeColors = {
   light: {
@@ -82,7 +76,6 @@ const themeColors = {
     border: '#343a40'
   }
 };
-
 // MovingCarIcon component for the hero section
 const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
   return (
@@ -121,7 +114,6 @@ const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
     </motion.div>
   );
 };
-
 // Animated Card Component
 const AnimatedCard = ({ children, delay }) => {
   const { ref, inView } = useInView({
@@ -140,7 +132,6 @@ const AnimatedCard = ({ children, delay }) => {
     </motion.div>
   );
 };
-
 // Enhanced Navbar with improved responsiveness
 const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, theme, sidebarCollapsed, toggleSidebar }) => {
   const colors = themeColors[theme];
@@ -326,7 +317,6 @@ const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, 
     </motion.nav>
   );
 };
-
 // Reusable Navigation Button Component
 const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant = "outline-light" }) => (
   <motion.button
@@ -338,7 +328,6 @@ const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant
     <i className={`bi ${icon} me-1`}></i> {label}
   </motion.button>
 );
-
 // Enhanced Driver Card Component with profile picture
 const DriverCard = ({ driver, onBook, isBooking, theme }) => {
   const colors = themeColors[theme];
@@ -421,7 +410,6 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
     </motion.div>
   );
 };
-
 // Driver Tracking Map Component (Placeholder)
 const DriverTrackingMap = ({ booking, theme }) => {
   const colors = themeColors[theme];
@@ -476,7 +464,6 @@ const DriverTrackingMap = ({ booking, theme }) => {
     </motion.div>
   );
 };
-
 // Notification Component
 const Notification = ({ message, type, visible, onClose }) => {
   const colors = themeColors['light']; // Using light theme for notifications
@@ -516,8 +503,7 @@ const Notification = ({ message, type, visible, onClose }) => {
     </AnimatePresence>
   );
 };
-
-// Driver Price Calculator Component
+// Driver Price Calculator Component - Updated with new calculation logic
 const DriverPriceCalculator = ({ theme }) => {
   const colors = themeColors[theme];
   const [days, setDays] = useState('');
@@ -588,19 +574,18 @@ const DriverPriceCalculator = ({ theme }) => {
     </motion.div>
   );
 };
-
-// Fare Calculator Page Component - Customer Only
+// Fare Calculator Page Component - Updated with new calculation logic
 const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
-  const [distance, setDistance] = useState('');
+  const [days, setDays] = useState('');
   const [fare, setFare] = useState(null);
   const [error, setError] = useState('');
   
   const calculateFare = () => {
-    const distanceValue = parseFloat(distance);
+    const daysValue = parseInt(days);
     
-    if (isNaN(distanceValue) || distanceValue <= 0) {
-      setError('Please enter a valid distance.');
+    if (isNaN(daysValue) || daysValue < 1) {
+      setError('Please enter a valid number of days.');
       setFare(null);
       return;
     }
@@ -608,12 +593,10 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme })
     setError('');
     
     let calculatedFare = 0;
-    if (distanceValue <= 10) {
-      calculatedFare = 5000;
-    } else if (distanceValue <= 50) {
-      calculatedFare = 5000 + (distanceValue - 10) * 250;
+    if (daysValue === 1) {
+      calculatedFare = 15000;
     } else {
-      calculatedFare = 5000 + (40 * 250) + ((distanceValue - 50) * 90);
+      calculatedFare = daysValue * 10000;
     }
     
     setFare(calculatedFare);
@@ -639,21 +622,19 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme })
             <div className="card-body p-3 p-md-4">
               <h2 className="card-title text-center mb-3 mb-md-4">RIDA Fare Calculator</h2>
               <p className="text-muted text-center mb-3 mb-md-4">
-                Calculate your fare based on distance<br />
-                In case you have problems in calculating the distance<br />
-                You may use Google Maps or ask your driver for help
+                Calculate your fare based on number of days needed
               </p>
               
               <div className="mb-4">
-                <label htmlFor="distanceInput" className="form-label fw-semibold">Distance (km)</label>
+                <label htmlFor="daysInput" className="form-label fw-semibold">Number of Days</label>
                 <div className="input-group">
                   <input
                     type="number"
                     className="form-control form-control-lg"
-                    id="distanceInput"
-                    placeholder="Enter distance in km"
-                    value={distance}
-                    onChange={(e) => setDistance(e.target.value)}
+                    id="daysInput"
+                    placeholder="Enter number of days"
+                    value={days}
+                    onChange={(e) => setDays(e.target.value)}
                     style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                   />
                   <motion.button 
@@ -696,9 +677,8 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme })
               <div className="mt-4 p-3 rounded-3" style={{ backgroundColor: theme === 'dark' ? '#2d2d2d' : '#f8f9fa' }}>
                 <h6 className="fw-semibold">Fare Structure:</h6>
                 <ul className="mb-0">
-                  <li>First 10 km: 5,000 RWF (flat rate)</li>
-                  <li>10-50 km: 250 RWF per additional km</li>
-                  <li>Above 50 km: 90 RWF per additional km</li>
+                  <li>1 day: 15,000 RWF (flat rate)</li>
+                  <li>More than 1 day: 10,000 RWF per day</li>
                 </ul>
               </div>
               
@@ -719,7 +699,6 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme })
     </motion.div>
   );
 };
-
 // Main application component that manages state and "routing"
 const App = () => {
   // State to hold user information and their authentication token
@@ -1030,7 +1009,6 @@ const App = () => {
     </>
   );
 };
-
 // Admin Dashboard Component
 const AdminDashboard = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -1590,7 +1568,6 @@ const AdminDashboard = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
-
 // Enhanced Homepage component with improved hero section
 const HomePage = ({ setCurrentPage, theme }) => {
   const colors = themeColors[theme];
@@ -1752,15 +1729,15 @@ const HomePage = ({ setCurrentPage, theme }) => {
             <div className="card-body p-3 p-md-4">
               <div className="row align-items-center">
                 <div className="col-md-6 mb-4 mb-md-0">
-                  <h3 className="card-title">We’re not another ride service.</h3>
+                  <h3 className="card-title">We're not another ride service.</h3>
                   <p className="card-text">
-                    We’re the service that gives you a driver for your own car or your journey.
+                    We're the service that gives you a driver for your own car or your journey.
                   </p>
                   <p className="card-text">
                     Need a safe driver after drinks, someone to take you out of town, a family driver, a driver for events and other occasions, or even a driver who doubles as a guide while visiting Rwanda?
                   </p>
                   <p className="card-text">
-                    That’s exactly what we do.
+                    That's exactly what we do.
                   </p>
                   <p className="card-text fw-bold">
                     Simple. Reliable. Professional.
@@ -2205,7 +2182,6 @@ const HomePage = ({ setCurrentPage, theme }) => {
     </motion.div>
   );
 };
-
 // Review Modal Component
 const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
   const [rating, setRating] = useState(5);
@@ -2297,7 +2273,6 @@ const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
     </div>
   );
 };
-
 // Customer Dashboard Component - Fixed with single payment method and driver filtering
 const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
@@ -2320,8 +2295,8 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
     scheduledTime: '',
     vehicleType: '',
     transmissionType: '',
-    distance: 0,
-    calculatedFare: 0,
+    days: 1, // Changed from distance to days
+    calculatedFare: 15000, // Initial fare for 1 day
     durationValue: 1,
     durationUnit: 'hours',
     language: 'english',
@@ -2555,17 +2530,15 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
       [name]: value
     }));
     
-    // Calculate fare when distance changes
-    if (name === 'distance') {
-      const distanceValue = parseFloat(value) || 0;
+    // Calculate fare when days changes
+    if (name === 'days') {
+      const daysValue = parseInt(value) || 0;
       let fare = 0;
       
-      if (distanceValue <= 10) {
-        fare = 5000;
-      } else if (distanceValue <= 50) {
-        fare = 5000 + (distanceValue - 10) * 250;
+      if (daysValue === 1) {
+        fare = 15000;
       } else {
-        fare = 5000 + (40 * 250) + ((distanceValue - 50) * 90);
+        fare = daysValue * 10000;
       }
       
       setBookingData(prev => ({
@@ -2586,8 +2559,8 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
       scheduledTime: '',
       vehicleType: '',
       transmissionType: '',
-      distance: 0,
-      calculatedFare: 0,
+      days: 1,
+      calculatedFare: 15000,
       durationValue: 1,
       durationUnit: 'hours',
       language: 'english',
@@ -2595,7 +2568,7 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
     });
   };
   
-  // Fixed submitBooking function
+  // Fixed submitBooking function with new pricing logic
   const submitBooking = async () => {
     if (!selectedDriver) return;
     
@@ -2608,16 +2581,14 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
         throw new Error('Pickup address and scheduled time are required');
       }
       
-      // Calculate pricing based on distance
-      const distanceValue = parseFloat(bookingData.distance) || 0;
+      // Calculate pricing based on days
+      const daysValue = parseInt(bookingData.days) || 0;
       let baseAmount = 0;
       
-      if (distanceValue <= 10) {
-        baseAmount = 5000;
-      } else if (distanceValue <= 50) {
-        baseAmount = 5000 + (distanceValue - 10) * 250;
+      if (daysValue === 1) {
+        baseAmount = 15000;
       } else {
-        baseAmount = 5000 + (40 * 250) + ((distanceValue - 50) * 90);
+        baseAmount = daysValue * 10000;
       }
       
       const discount = 0; // No discount for now
@@ -2652,7 +2623,7 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
           tax: tax,
           totalAmount: totalAmount
         },
-        notes: `Vehicle Type: ${bookingData.vehicleType}, Transmission: ${bookingData.transmissionType}, Language: ${bookingData.language}`
+        notes: `Vehicle Type: ${bookingData.vehicleType}, Transmission: ${bookingData.transmissionType}, Language: ${bookingData.language}, Days: ${bookingData.days}`
       };
       
       // Add dropoff location only if provided
@@ -3111,33 +3082,24 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
                     </select>
                   </div>
                   
-                  {/* 5. Distance and Dropoff Address */}
+                  {/* 5. Number of Days */}
                   <div className="mb-3">
-                    <label className="form-label fw-semibold">5. Destination & Distance</label>
-                    <input 
-                      type="text" 
-                      className="form-control mb-2" 
-                      name="dropoffAddress"
-                      value={bookingData.dropoffAddress}
-                      onChange={handleBookingInputChange}
-                      placeholder="Enter destination address"
-                      style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
-                    />
+                    <label className="form-label fw-semibold">5. Number of Days</label>
                     <div className="input-group">
                       <input
                         type="number"
                         className="form-control"
-                        name="distance"
-                        value={bookingData.distance}
+                        name="days"
+                        value={bookingData.days}
                         onChange={handleBookingInputChange}
-                        placeholder="Distance in km"
-                        min="0"
-                        step="0.1"
+                        placeholder="Enter number of days"
+                        min="1"
+                        step="1"
                         style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
                       />
-                      <span className="input-group-text">km</span>
+                      <span className="input-group-text">days</span>
                     </div>
-                    {bookingData.distance > 0 && (
+                    {bookingData.days > 0 && (
                       <div className="mt-2 alert alert-info">
                         <i className="bi bi-info-circle me-2"></i>
                         Estimated Fare: <strong>{bookingData.calculatedFare.toLocaleString()} RWF</strong>
@@ -3228,7 +3190,6 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
     </motion.div>
   );
 };
-
 // Driver Dashboard Component - Updated with availability toggle
 const DriverDashboard = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3521,7 +3482,6 @@ const DriverDashboard = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
-
 // Booking List component that fetches user-specific bookings
 const BookingList = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3722,7 +3682,6 @@ const BookingList = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
-
 // Reviews Page Component
 const ReviewsPage = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3829,7 +3788,6 @@ const ReviewsPage = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
-
 // Login form component
 const Login = ({ onLoginSuccess, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3922,7 +3880,6 @@ const Login = ({ onLoginSuccess, showMessage, theme }) => {
     </div>
   );
 };
-
 // Registration form component
 const Register = ({ onRegisterSuccess, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -4435,5 +4392,4 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
     </motion.div>
   );
 };
-
 export default App;
