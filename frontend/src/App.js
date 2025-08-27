@@ -1905,29 +1905,9 @@ const HomePage = ({ setCurrentPage, theme }) => {
           <h2 className="text-center mb-4">How It Works</h2>
           <div className="card border-0 shadow-sm" style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}>
             <div className="card-body p-3 p-md-4">
-              <div className="row align-items-center">
-                <div className="col-md-6 mb-4 mb-md-0">
-                  <h3 className="card-title">Easy Booking Process</h3>
-                  <p className="card-text">
-                    Our platform makes it simple to find and book the perfect driver for your needs:
-                  </p>
-                  <ol>
-                    <li><strong>Sign Up or Login:</strong> Create an account or log in to your existing account.</li>
-                    <li><strong>Filter Drivers:</strong> Use our advanced filtering system to find drivers that match your specific requirements:
-                      <ul>
-                        <li>Age range and years of experience</li>
-                        <li>Vehicle type and transmission preference</li>
-                        <li>Service areas and availability</li>
-                        <li>Languages spoken and service types</li>
-                      </ul>
-                    </li>
-                    <li><strong>Book Your Driver:</strong> Select your preferred driver and provide trip details including pickup location, time, and destination.</li>
-                    <li><strong>Enjoy Your Ride:</strong> Your professional driver will arrive at the scheduled time and get you to your destination safely.</li>
-                    <li><strong>Pay & Rate:</strong> Pay the calculated fare and rate your experience to help us improve our service.</li>
-                  </ol>
-                </div>
-                <div className="col-md-6 text-center">
-                  {/* Animated steps illustration */}
+              {/* Animated steps illustration - now at the top */}
+              <div className="row mb-4">
+                <div className="col-12 text-center">
                   <div className="d-flex flex-column align-items-center">
                     {[1, 2, 3, 4, 5].map((step, index) => (
                       <motion.div 
@@ -1951,6 +1931,30 @@ const HomePage = ({ setCurrentPage, theme }) => {
                       </motion.div>
                     ))}
                   </div>
+                </div>
+              </div>
+              
+              {/* Text content - now below the icons */}
+              <div className="row">
+                <div className="col-12">
+                  <h3 className="card-title text-center">Easy Booking Process</h3>
+                  <p className="card-text text-center">
+                    Our platform makes it simple to find and book the perfect driver for your needs:
+                  </p>
+                  <ol>
+                    <li><strong>Sign Up or Login:</strong> Create an account or log in to your existing account.</li>
+                    <li><strong>Filter Drivers:</strong> Use our advanced filtering system to find drivers that match your specific requirements:
+                      <ul>
+                        <li>Age range and years of experience</li>
+                        <li>Vehicle type and transmission preference</li>
+                        <li>Service areas and availability</li>
+                        <li>Languages spoken and service types</li>
+                      </ul>
+                    </li>
+                    <li><strong>Book Your Driver:</strong> Select your preferred driver and provide trip details including pickup location, time, and destination.</li>
+                    <li><strong>Enjoy Your Ride:</strong> Your professional driver will arrive at the scheduled time and get you to your destination safely.</li>
+                    <li><strong>Pay & Rate:</strong> Pay the calculated fare and rate your experience to help us improve our service.</li>
+                  </ol>
                 </div>
               </div>
             </div>
