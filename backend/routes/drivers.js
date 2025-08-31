@@ -201,6 +201,99 @@ router.get('/', async (req, res) => {
     }
 });
 
+// @route   GET api/drivers/all-drivers
+// @desc    Get all drivers without any filters (for admin use)
+// @access  Public
+router.get('/all-drivers', async (req, res) => {
+    try {
+        const drivers = await Driver.find()
+            .populate('user', 'name email phone profilePicture');
+        
+        if (drivers.length === 0) {
+            return res.status(404).json({ msg: 'No drivers found.' });
+        }
+        
+        // Add booking statistics
+        const driversWithStats = drivers.map(driver => {
+            const driverObj = driver.toObject();
+            const activeSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'active');
+            const completedSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'completed');
+            
+            driverObj.bookingStats = {
+                activeBookings: activeSlots.length,
+                completedBookings: completedSlots.length,
+                isCurrentlyBooked: activeSlots.some(slot => {
+                    const now = new Date();
+                    return now >= new Date(slot.startTime) && now <= new Date(slot.endTime);
+                })
+            };
+            
+            return driverObj;
+        });
+        
+        res.json(driversWithStats);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route   GET api/drivers/profile
+// @desc    Get driver profile with booking statistics
+// @access  Private
+router.get('/profile', auth, async (req, res) => {
+    try {
+        const driver = await Driver.findOne({ user: req.user.id })
+            .populate('user', 'name email phone profilePicture');
+        
+        if (!driver) {
+            return res.status(404).json({ msg: 'Driver profile not found' });
+        }
+        
+        // Add booking statistics
+        const driverObj = driver.toObject();
+        const now = new Date();
+        
+        const activeSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'active');
+        const completedSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'completed');
+        
+        // Find current active booking
+        const currentBooking = activeSlots.find(slot => {
+            const slotStart = new Date(slot.startTime);
+            const slotEnd = new Date(slot.endTime);
+            return now >= slotStart && now <= slotEnd;
+        });
+        
+        // Find next upcoming booking
+        const upcomingBookings = activeSlots.filter(slot => {
+            const slotStart = new Date(slot.startTime);
+            return slotStart > now;
+        }).sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+        
+        driverObj.bookingStats = {
+            totalActiveBookings: activeSlots.length,
+            totalCompletedBookings: completedSlots.length,
+            currentlyInBooking: !!currentBooking,
+            currentBooking: currentBooking ? {
+                bookingId: currentBooking.bookingId,
+                startTime: currentBooking.startTime,
+                endTime: currentBooking.endTime
+            } : null,
+            nextBooking: upcomingBookings[0] ? {
+                bookingId: upcomingBookings[0].bookingId,
+                startTime: upcomingBookings[0].startTime,
+                endTime: upcomingBookings[0].endTime
+            } : null,
+            upcomingBookingsCount: upcomingBookings.length
+        };
+        
+        res.json(driverObj);
+    } catch (err) {
+        console.error('Error fetching driver profile:', err.message);
+        res.status(500).json({ msg: 'Server Error', error: err.message });
+    }
+});
+
 // @route   GET api/drivers/availability/:id
 // @desc    Check specific driver's availability for a time slot
 // @access  Public
@@ -524,62 +617,6 @@ router.put('/availability', auth, async (req, res) => {
         
     } catch (err) {
         console.error('Error updating availability:', err.message);
-        res.status(500).json({ msg: 'Server Error', error: err.message });
-    }
-});
-
-// @route   GET api/drivers/profile
-// @desc    Get driver profile with booking statistics
-// @access  Private
-router.get('/profile', auth, async (req, res) => {
-    try {
-        const driver = await Driver.findOne({ user: req.user.id })
-            .populate('user', 'name email phone profilePicture');
-        
-        if (!driver) {
-            return res.status(404).json({ msg: 'Driver profile not found' });
-        }
-        
-        // Add booking statistics
-        const driverObj = driver.toObject();
-        const now = new Date();
-        
-        const activeSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'active');
-        const completedSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'completed');
-        
-        // Find current active booking
-        const currentBooking = activeSlots.find(slot => {
-            const slotStart = new Date(slot.startTime);
-            const slotEnd = new Date(slot.endTime);
-            return now >= slotStart && now <= slotEnd;
-        });
-        
-        // Find next upcoming booking
-        const upcomingBookings = activeSlots.filter(slot => {
-            const slotStart = new Date(slot.startTime);
-            return slotStart > now;
-        }).sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
-        
-        driverObj.bookingStats = {
-            totalActiveBookings: activeSlots.length,
-            totalCompletedBookings: completedSlots.length,
-            currentlyInBooking: !!currentBooking,
-            currentBooking: currentBooking ? {
-                bookingId: currentBooking.bookingId,
-                startTime: currentBooking.startTime,
-                endTime: currentBooking.endTime
-            } : null,
-            nextBooking: upcomingBookings[0] ? {
-                bookingId: upcomingBookings[0].bookingId,
-                startTime: upcomingBookings[0].startTime,
-                endTime: upcomingBookings[0].endTime
-            } : null,
-            upcomingBookingsCount: upcomingBookings.length
-        };
-        
-        res.json(driverObj);
-    } catch (err) {
-        console.error('Error fetching driver profile:', err.message);
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 });
