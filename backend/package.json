@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "Driver booking platform backend API",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+ "scripts": {
+  "start": "node index.js",
+  "dev": "npm run start"
+}
   "keywords": ["driver", "booking", "platform", "api"],
   "author": "Your Name",
   "license": "MIT",
