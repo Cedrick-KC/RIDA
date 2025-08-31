@@ -29,7 +29,7 @@
   "scripts": {
      "prebuild": "chmod +x node_modules/.bin/react-scripts || true",
     "build:css": "tailwindcss -i ./src/App.css -o ./dist/output.css --watch",
-     "start": "DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
+     "start": "chmod +x ./node_modules/.bin/react-scripts && DANGEROUSLY_DISABLE_HOST_CHECK=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
