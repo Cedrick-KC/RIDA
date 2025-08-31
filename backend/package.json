@@ -22,5 +22,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+   "overrides": {
+    "path-to-regexp": "0.1.7"
   }
 }
