@@ -13,6 +13,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "serve": "^14.2.0",
     "express-validator": "^7.2.1",
     "framer-motion": "^12.23.12",
     "jsonwebtoken": "^9.0.2",
@@ -29,8 +30,9 @@
   "scripts": {
      "prebuild": "chmod +x node_modules/.bin/react-scripts || true",
     "build:css": "tailwindcss -i ./src/App.css -o ./dist/output.css --watch",
-      "start": "BROWSER=none npx react-scripts start",
-    "build": "npx react-scripts build",
+    "start": "serve -s build -p $PORT",
+    "dev": "BROWSER=none react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
