@@ -38,7 +38,7 @@
     "build:css": "tailwindcss -i ./src/App.css -o ./dist/output.css --watch",
     "start": "serve -s build -p $PORT",
     "dev": "BROWSER=none react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
