@@ -204,39 +204,6 @@ router.get('/', async (req, res) => {
 // @route   GET api/drivers/all-drivers
 // @desc    Get all drivers without any filters (for admin use)
 // @access  Public
-router.get('/all-drivers', async (req, res) => {
-    try {
-        const drivers = await Driver.find()
-            .populate('user', 'name email phone profilePicture');
-        
-        if (drivers.length === 0) {
-            return res.status(404).json({ msg: 'No drivers found.' });
-        }
-        
-        // Add booking statistics
-        const driversWithStats = drivers.map(driver => {
-            const driverObj = driver.toObject();
-            const activeSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'active');
-            const completedSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'completed');
-            
-            driverObj.bookingStats = {
-                activeBookings: activeSlots.length,
-                completedBookings: completedSlots.length,
-                isCurrentlyBooked: activeSlots.some(slot => {
-                    const now = new Date();
-                    return now >= new Date(slot.startTime) && now <= new Date(slot.endTime);
-                })
-            };
-            
-            return driverObj;
-        });
-        
-        res.json(driversWithStats);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
-    }
-});
 
 // @route   GET api/drivers/profile
 // @desc    Get driver profile with booking statistics
