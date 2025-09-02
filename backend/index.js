@@ -3,7 +3,7 @@ const express = require('express');
 const connectDB = require('./config/db.js');
 const cors = require('cors');
 const path = require('path');
-
+console.log('🔍 Starting route registration debugging...');
 // Import routes
 const authRoutes = require('./routes/auth.js');
 const bookingRoutes = require('./routes/bookings.js');
