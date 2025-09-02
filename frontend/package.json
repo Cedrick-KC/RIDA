@@ -29,8 +29,8 @@
   "scripts": {
      "prebuild": "chmod +x node_modules/.bin/react-scripts || true",
     "build:css": "tailwindcss -i ./src/App.css -o ./dist/output.css --watch",
-      "start": "BROWSER=none react-scripts start",
-    "build": "react-scripts build",
+      "start": "BROWSER=none npx react-scripts start",
+    "build": "npx react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
