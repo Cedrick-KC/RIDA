@@ -27,12 +27,12 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  {
+  
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
-  }
-},
+  },
+
   "scripts": {
      "prebuild": "chmod +x node_modules/.bin/react-scripts || true",
     "build:css": "tailwindcss -i ./src/App.css -o ./dist/output.css --watch",
