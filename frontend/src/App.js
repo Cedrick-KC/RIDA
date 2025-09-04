@@ -1,5 +1,5 @@
 import config from './config';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -83,6 +83,76 @@ const themeColors = {
   }
 };
 
+// Notification Context
+const NotificationContext = React.createContext();
+
+// Enhanced Notification Provider with browser notification support
+const NotificationProvider = ({ children }) => {
+  const [notifications, setNotifications] = useState([]);
+  
+  // Request notification permission on component mount
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
+  
+  const addNotification = (message, type = 'info', showBrowserNotification = true) => {
+    const id = Date.now();
+    const newNotification = {
+      id,
+      message,
+      type,
+      visible: true
+    };
+    
+    // Add to in-app notifications
+    setNotifications(prev => [...prev, newNotification]);
+    
+    // Show browser notification if permission is granted and requested
+    if (showBrowserNotification && 'Notification' in window && Notification.permission === 'granted') {
+      const browserNotification = new Notification('RIDA Notification', {
+        body: message,
+        icon: '/favicon.ico', // You should add a favicon to your public folder
+        badge: '/favicon.ico',
+        tag: `rida-notification-${id}`,
+        requireInteraction: false,
+        silent: false
+      });
+      
+      // Handle click on browser notification
+      browserNotification.onclick = () => {
+        window.focus();
+        browserNotification.close();
+      };
+    }
+    
+    // Auto remove notification after 5 seconds
+    setTimeout(() => {
+      removeNotification(id);
+    }, 5000);
+  };
+  
+  const removeNotification = (id) => {
+    setNotifications(prev => prev.filter(notification => notification.id !== id));
+  };
+  
+  return (
+    <NotificationContext.Provider value={{ addNotification }}>
+      {children}
+      {notifications.map(notification => (
+        <Notification
+          key={notification.id}
+          message={notification.message}
+          type={notification.type}
+          visible={notification.visible}
+          onClose={() => removeNotification(notification.id)}
+        />
+      ))}
+    </NotificationContext.Provider>
+  );
+};
+
 // MovingCarIcon component for the hero section
 const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
   return (
@@ -139,6 +209,46 @@ const AnimatedCard = ({ children, delay }) => {
     >
       {children}
     </motion.div>
+  );
+};
+
+// Notification Component
+const Notification = ({ message, type, visible, onClose }) => {
+  const colors = themeColors['light']; // Using light theme for notifications
+  
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div 
+          className={`toast show position-fixed bottom-0 end-0 m-3 text-white`}
+          style={{ 
+            backgroundColor: type === 'success' ? colors.success : 
+                             type === 'error' ? colors.danger : 
+                             type === 'warning' ? colors.warning : colors.info,
+            zIndex: 1050
+          }}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 50 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="toast-body d-flex justify-content-between align-items-center">
+            <div>
+              <i className={`bi ${type === 'success' ? 'bi-check-circle' : 
+                                 type === 'error' ? 'bi-x-circle' : 
+                                 type === 'warning' ? 'bi-exclamation-triangle' : 
+                                 'bi-info-circle'} me-2`}></i>
+              {message}
+            </div>
+            <button 
+              type="button" 
+              className="btn-close btn-close-white ms-3" 
+              onClick={onClose}
+            ></button>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -491,46 +601,6 @@ const DriverTrackingMap = ({ booking, theme }) => {
   );
 };
 
-// Notification Component
-const Notification = ({ message, type, visible, onClose }) => {
-  const colors = themeColors['light']; // Using light theme for notifications
-  
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div 
-          className={`toast show position-fixed bottom-0 end-0 m-3 text-white`}
-          style={{ 
-            backgroundColor: type === 'success' ? colors.success : 
-                             type === 'error' ? colors.danger : 
-                             type === 'warning' ? colors.warning : colors.info,
-            zIndex: 1050
-          }}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="toast-body d-flex justify-content-between align-items-center">
-            <div>
-              <i className={`bi ${type === 'success' ? 'bi-check-circle' : 
-                                 type === 'error' ? 'bi-x-circle' : 
-                                 type === 'warning' ? 'bi-exclamation-triangle' : 
-                                 'bi-info-circle'} me-2`}></i>
-              {message}
-            </div>
-            <button 
-              type="button" 
-              className="btn-close btn-close-white ms-3" 
-              onClick={onClose}
-            ></button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
-
 // Driver Price Calculator Component - Updated with new calculation logic
 const DriverPriceCalculator = ({ theme }) => {
   const colors = themeColors[theme];
@@ -744,6 +814,19 @@ const App = () => {
   const [theme, setTheme] = useState('light');
   // State for sidebar collapse on mobile
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  
+  // Register service worker for push notifications
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch(error => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  }, []);
   
   // Load Bootstrap CSS, JS, and Icons dynamically when component mounts
   useEffect(() => {
@@ -966,7 +1049,7 @@ const App = () => {
   };
   
   return (
-    <>
+    <NotificationProvider>
       <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: themeColors[theme].background, color: themeColors[theme].text }}>
         {/* Navigation for the app */}
         <Navbar 
@@ -1036,7 +1119,7 @@ const App = () => {
         visible={message.visible} 
         onClose={() => setMessage(prev => ({ ...prev, visible: false }))} 
       />
-    </>
+    </NotificationProvider>
   );
 };
 
@@ -2310,6 +2393,7 @@ const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
 // Customer Dashboard Component - Fixed with single payment method and driver filtering
 const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
+  const { addNotification } = useContext(NotificationContext);
   const [drivers, setDrivers] = useState([]);
   const [filteredDrivers, setFilteredDrivers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -2709,6 +2793,14 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
       
       const data = await response.json();
       console.log('Booking successful:', data);
+      
+      // Trigger notification for successful booking
+      addNotification(
+        `Booking request sent to ${selectedDriver.user.name}. Waiting for driver's response.`,
+        'success',
+        true // Enable browser notification
+      );
+      
       showMessage('Booking created successfully!', 'success');
       setShowBookingForm(false);
       
@@ -3228,6 +3320,7 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
 // Driver Dashboard Component - Updated with availability toggle
 const DriverDashboard = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
+  const { addNotification } = useContext(NotificationContext);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [driverProfile, setDriverProfile] = useState(null);
@@ -3350,16 +3443,31 @@ const DriverDashboard = ({ user, token, showMessage, theme }) => {
         booking._id === bookingId ? { ...booking, status } : booking
       ));
       
-      // If driver accepted a booking, update their availability to unavailable
-      if (status === 'accepted' && driverProfile) {
-        setDriverProfile(prev => ({ 
-          ...prev, 
-          availability: { 
-            ...prev.availability, 
-            isAvailable: false 
-          } 
-        }));
-        showMessage('You are now marked as unavailable for new bookings', 'info');
+      // Trigger notification based on status with browser notification
+      if (status === 'accepted') {
+        addNotification(
+          'You have accepted the booking request. The customer has been notified.',
+          'success',
+          true // Enable browser notification
+        );
+        
+        // If driver accepted a booking, update their availability to unavailable
+        if (driverProfile) {
+          setDriverProfile(prev => ({ 
+            ...prev, 
+            availability: { 
+              ...prev.availability, 
+              isAvailable: false 
+            } 
+          }));
+          showMessage('You are now marked as unavailable for new bookings', 'info');
+        }
+      } else if (status === 'cancelled') {
+        addNotification(
+          'You have declined the booking request. The customer has been notified.',
+          'warning',
+          true // Enable browser notification
+        );
       }
       
       showMessage(`Booking status updated to ${status}`, 'success');
@@ -3521,6 +3629,7 @@ const DriverDashboard = ({ user, token, showMessage, theme }) => {
 // Booking List component that fetches user-specific bookings
 const BookingList = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
+  const { addNotification } = useContext(NotificationContext);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -3586,6 +3695,28 @@ const BookingList = ({ user, token, showMessage, theme }) => {
       setBookings([]);
     }
   }, [token, showMessage, user.name]);
+  
+  // Add useEffect to monitor booking status changes
+  useEffect(() => {
+    if (bookings.length > 0) {
+      const booking = bookings.find(b => b.status === 'accepted' || b.status === 'cancelled');
+      if (booking) {
+        if (booking.status === 'accepted') {
+          addNotification(
+            `Your driver booking has been accepted by ${booking.driver?.user?.name || booking.driver?.name || 'the driver'}.`,
+            'success',
+            true // Enable browser notification
+          );
+        } else if (booking.status === 'cancelled') {
+          addNotification(
+            `Your driver booking has been declined by ${booking.driver?.user?.name || booking.driver?.name || 'the driver'}.`,
+            'warning',
+            true // Enable browser notification
+          );
+        }
+      }
+    }
+  }, [bookings, addNotification]);
   
   const openReviewModal = (booking) => {
     setSelectedBooking(booking);
