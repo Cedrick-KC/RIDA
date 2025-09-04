@@ -154,7 +154,10 @@ const NotificationProvider = ({ children }) => {
 };
 
 // MovingCarIcon component for the hero section
-const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
+
+const MovingCarIcon = ({ direction = 'right', delay = 0, theme }) => {
+  const colors = theme ? themeColors[theme] : themeColors.light;
+  
   return (
     <motion.div
       className="position-absolute"
@@ -191,9 +194,9 @@ const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
     </motion.div>
   );
 };
-
 // Animated Card Component
-const AnimatedCard = ({ children, delay }) => {
+// Animated Card Component
+const AnimatedCard = ({ children, delay, theme }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.2,
@@ -1684,8 +1687,10 @@ const AdminDashboard = ({ user, token, showMessage, theme }) => {
 };
 
 // Enhanced Homepage component with improved hero section
+// Enhanced Homepage component with improved hero section
 const HomePage = ({ setCurrentPage, theme }) => {
-  const colors = themeColors[theme];
+  // Add a safety check for the theme prop
+  const colors = theme ? themeColors[theme] : themeColors.light;
   
   return (
     <motion.div
@@ -1703,9 +1708,9 @@ const HomePage = ({ setCurrentPage, theme }) => {
         transition={{ duration: 1 }}
       >
         {/* Moving car icons */}
-        <MovingCarIcon direction="right" delay={0} />
-        <MovingCarIcon direction="left" delay={2} />
-        <MovingCarIcon direction="right" delay={4} />
+        <MovingCarIcon direction="right" delay={0} theme={theme} />
+        <MovingCarIcon direction="left" delay={2} theme={theme} />
+        <MovingCarIcon direction="right" delay={4} theme={theme} />
         
         {/* Floating icons */}
         <motion.div 
