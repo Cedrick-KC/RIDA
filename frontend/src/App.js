@@ -2016,8 +2016,8 @@ const HomePage = ({ setCurrentPage, theme }) => {
      // 4. How It Works Section - Updated with better styling
 const HowItWorksSection = () => {
   const colors = {
-    cardBg = '#ffffff',
-    border = '#e9ecef'
+     cardBg = '#ffffff',
+     border = '#e9ecef'
   };
 
   const steps = [
