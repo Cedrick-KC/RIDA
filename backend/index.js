@@ -19,7 +19,7 @@ connectDB();
 // CORS - Allow your frontend to connect
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://rida-production-d2a6.up.railway.app']
+    ? ['https://rida-production-d2a6.up.railway.app', 'https://www.ridaapp.com', 'https://ridaapp.com']
     : [process.env.FRONTEND_URL || 'http://localhost:3000'],
   credentials: true
 }));
