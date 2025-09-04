@@ -527,7 +527,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
               {/* Added phone number display */}
               <div className="d-flex align-items-center mt-1">
                 <i className="bi bi-telephone text-muted me-1"></i>
-                <span className="small">{driver.user?.phone || 'No phone number'}</span>
+                <span className="small">{driver.user.phone || 'No phone number'}</span>
               </div>
             </div>
           </div>
