@@ -71,7 +71,6 @@ router.get('/', async (req, res) => {
             minRating,
             maxDistance = 10,
             sortBy = 'rating',
-            // New time-based filtering parameters
             scheduledTime,
             duration
         } = req.query;
@@ -139,31 +138,48 @@ router.get('/', async (req, res) => {
                 sortOptions = { 'ratings.average': -1 };
         }
         
+        // DEBUG: Log query and check what we're looking for
+        console.log('🔍 Drivers query:', JSON.stringify(query, null, 2));
+        
         // Get all potentially available drivers
         let drivers = await Driver.find(query)
             .populate('user', 'name email phone profilePicture')
             .sort(sortOptions);
         
+        // DEBUG: Check what we actually got
+        console.log('📊 Found drivers:', drivers.length);
+        drivers.forEach((driver, index) => {
+            console.log(`Driver ${index + 1}:`, {
+                id: driver._id,
+                hasUser: !!driver.user,
+                user: driver.user ? {
+                    id: driver.user._id,
+                    name: driver.user.name,
+                    email: driver.user.email,
+                    phone: driver.user.phone
+                } : 'NULL/UNDEFINED',
+                userField: driver.user // Raw user field
+            });
+        });
+        
         // Apply time-based filtering if scheduledTime and duration are provided
         if (scheduledTime && duration) {
             try {
                 const startTime = new Date(scheduledTime);
-                const parsedDuration = JSON.parse(duration); // Expecting {value: 2, unit: 'hours'}
+                const parsedDuration = JSON.parse(duration);
                 const endTime = calculateEndTime(startTime, parsedDuration);
                 console.log(`🔍 Filtering drivers for time slot: ${startTime} to ${endTime}`);
                 
-                // Filter drivers based on their availability for the requested time slot
                 drivers = drivers.filter(driver => {
                     const isAvailable = driver.isAvailableForTimeSlot(startTime, endTime);
                     if (!isAvailable) {
-                        console.log(`❌ Driver ${driver._id} (${driver.user.name}) not available for requested time slot`);
+                        console.log(`❌ Driver ${driver._id} not available for requested time slot`);
                     }
                     return isAvailable;
                 });
                 console.log(`✅ Found ${drivers.length} available drivers for the requested time slot`);
             } catch (timeFilterError) {
                 console.error('Error applying time-based filtering:', timeFilterError);
-                // Continue without time filtering if there's an error
             }
         }
         
@@ -179,20 +195,27 @@ router.get('/', async (req, res) => {
         const driversWithAvailability = drivers.map(driver => {
             const driverObj = driver.toObject();
             
-            // Add current booking status info
+            // DEBUG: Check if user is still there after toObject()
+            if (!driverObj.user) {
+                console.error('❌ Driver user object missing after toObject():', driverObj._id);
+            }
+            
             const activeSlots = driver.availability.bookedSlots.filter(slot => slot.status === 'active');
             driverObj.currentBookings = activeSlots.length;
             
-            // Add next available time if driver has active bookings
             if (activeSlots.length > 0) {
                 const nextAvailable = activeSlots
                     .map(slot => new Date(slot.endTime))
-                    .sort((a, b) => b - a)[0]; // Get latest end time
+                    .sort((a, b) => b - a)[0];
                 driverObj.nextAvailableTime = nextAvailable;
             }
             
             return driverObj;
         });
+        
+        // FINAL DEBUG: Check what we're sending to frontend
+        console.log('🚀 Sending to frontend:', driversWithAvailability.length, 'drivers');
+        console.log('First driver structure:', JSON.stringify(driversWithAvailability[0], null, 2));
         
         res.json(driversWithAvailability);
     } catch (err) {
@@ -200,7 +223,6 @@ router.get('/', async (req, res) => {
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 });
-
 // @route   GET api/drivers/all-drivers
 // @desc    Get all drivers without any filters (for admin use)
 // @access  Public
