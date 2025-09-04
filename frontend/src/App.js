@@ -301,6 +301,17 @@ const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, 
                     <li><button className="dropdown-item" onClick={handleLogout}><i className="bi bi-box-arrow-right me-2"></i> Logout</button></li>
                   </ul>
                 </div>
+                {/* Logout toggle button */}
+                <motion.button 
+                  className="btn btn-outline-danger rounded-circle p-2"
+                  onClick={handleLogout} 
+                  title="Logout"
+                  whileHover={{ scale: 1.1, rotate: 180 }}
+                  whileTap={{ scale: 0.9 }}
+                  style={{ width: '40px', height: '40px' }}
+                >
+                  <i className="bi bi-power"></i>
+                </motion.button>
               </div>
             ) : (
               <div className="d-flex flex-column flex-sm-row gap-2">
