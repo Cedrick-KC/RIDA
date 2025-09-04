@@ -2015,10 +2015,12 @@ const HomePage = ({ setCurrentPage, theme }) => {
       
      // 4. How It Works Section - Updated with better styling
 const HowItWorksSection = () => {
-   const colors = {
+  // Define colors variable
+  const colors = {
     cardBg: '#ffffff',
     border: '#e9ecef'
   };
+
   const steps = [
     { 
       icon: 'bi-person-plus', 
@@ -2122,7 +2124,6 @@ const HowItWorksSection = () => {
     </div>
   );
 };
-      
       {/* 5. Why Choose Our Drivers Section */}
       <div className="row mb-5">
         <div className="col-12">
