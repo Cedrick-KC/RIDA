@@ -39,7 +39,6 @@ const DriverSchema = new mongoose.Schema({
         licensePlate: { 
             type: String, 
             required: true,
-            unique: true,
             trim: true,
             uppercase: true
         },
