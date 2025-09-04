@@ -2124,13 +2124,53 @@ const HowItWorksSection = () => {
     </div>
   );
 };
-      {/* 5. Why Choose Our Drivers Section */}
-      <div className="row mb-5">
-        <div className="col-12">
-          <h2 className="text-center mb-4">Why Choose Our Drivers</h2>
-          <div className="row g-4">
-            <div className="col-6 col-md-3">
-              <AnimatedCard delay={0.1}>
+
+    const WhyChooseDriversSection = () => {
+  // Define colors variable
+  const colors = {
+    cardBg: '#ffffff',
+    border: '#e9ecef'
+  };
+
+  const features = [
+    {
+      icon: 'bi-shield-check',
+      title: 'Verified Professionals',
+      description: 'All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.',
+      color: 'primary',
+      delay: 0.1
+    },
+    {
+      icon: 'bi-currency-dollar',
+      title: 'Transparent Pricing',
+      description: 'Competitive pricing with no hidden fees. Know exactly what you\'ll pay before booking.',
+      color: 'success',
+      delay: 0.3
+    },
+    {
+      icon: 'bi-clock-history',
+      title: '24/7 Availability',
+      description: 'Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use platform.',
+      color: 'info',
+      delay: 0.5
+    },
+    {
+      icon: 'bi-person-badge',
+      title: 'Experienced Drivers',
+      description: 'Professional, courteous drivers who prioritize your comfort and punctuality.',
+      color: 'warning',
+      delay: 0.7
+    }
+  ];
+
+  return (
+    <div className="row mb-5">
+      <div className="col-12">
+        <h2 className="text-center mb-4">Why Choose Our Drivers</h2>
+        <div className="row g-4">
+          {features.map((feature, index) => (
+            <div key={index} className="col-6 col-md-3">
+              <AnimatedCard delay={feature.delay}>
                 <motion.div 
                   className="card h-100 border-0 shadow-sm text-center p-4"
                   style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
@@ -2140,86 +2180,23 @@ const HowItWorksSection = () => {
                   }}
                 >
                   <motion.div 
-                    className="text-primary mb-3"
+                    className={`text-${feature.color} mb-3`}
                     whileHover={{ rotate: 15, scale: 1.2 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <i className="bi bi-shield-check fs-1"></i>
+                    <i className={`bi ${feature.icon} fs-1`}></i>
                   </motion.div>
-                  <h4 className="card-title">Verified Professionals</h4>
-                  <p className="card-text">All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.</p>
+                  <h4 className="card-title">{feature.title}</h4>
+                  <p className="card-text">{feature.description}</p>
                 </motion.div>
               </AnimatedCard>
             </div>
-            <div className="col-6 col-md-3">
-              <AnimatedCard delay={0.3}>
-                <motion.div 
-                  className="card h-100 border-0 shadow-sm text-center p-4"
-                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                  }}
-                >
-                  <motion.div 
-                    className="text-success mb-3"
-                    whileHover={{ rotate: 15, scale: 1.2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <i className="bi bi-currency-dollar fs-1"></i>
-                  </motion.div>
-                  <h4 className="card-title">Transparent Pricing</h4>
-                  <p className="card-text">Competitive pricing with no hidden fees. Know exactly what you'll pay before booking.</p>
-                </motion.div>
-              </AnimatedCard>
-            </div>
-            <div className="col-6 col-md-3">
-              <AnimatedCard delay={0.5}>
-                <motion.div 
-                  className="card h-100 border-0 shadow-sm text-center p-4"
-                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                  }}
-                >
-                  <motion.div 
-                    className="text-info mb-3"
-                    whileHover={{ rotate: 15, scale: 1.2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <i className="bi bi-clock-history fs-1"></i>
-                  </motion.div>
-                  <h4 className="card-title">24/7 Availability</h4>
-                  <p className="card-text">Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use platform.</p>
-                </motion.div>
-              </AnimatedCard>
-            </div>
-            <div className="col-6 col-md-3">
-              <AnimatedCard delay={0.7}>
-                <motion.div 
-                  className="card h-100 border-0 shadow-sm text-center p-4"
-                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                  }}
-                >
-                  <motion.div 
-                    className="text-warning mb-3"
-                    whileHover={{ rotate: 15, scale: 1.2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <i className="bi bi-person-badge fs-1"></i>
-                  </motion.div>
-                  <h4 className="card-title">Experienced Drivers</h4>
-                  <p className="card-text">Professional, courteous drivers who prioritize your comfort and punctuality.</p>
-                </motion.div>
-              </AnimatedCard>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
+    </div>
+  );
+};
       
       {/* 6. Book Your Driver Now Section */}
       <div className="text-center py-5 mb-5">
