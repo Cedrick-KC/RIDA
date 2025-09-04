@@ -36,6 +36,54 @@ const calculateFare = (distance) => {
     }
 };
 
+// @route   GET api/bookings/active
+// @desc    Get active booking for logged-in user
+// @access  Private
+router.get('/active', auth, async (req, res) => {
+    try {
+        let booking;
+        
+        if (req.user.userType === 'customer') {
+            booking = await Booking.findOne({ 
+                customer: req.user.id,
+                status: { $in: ['accepted', 'started'] }
+            })
+            .populate({
+                path: 'driver',
+                populate: {
+                    path: 'user',
+                    model: 'User',
+                    select: 'name email profilePicture'
+                }
+            });
+            
+        } else if (req.user.userType === 'driver') {
+            const driver = await Driver.findOne({ user: req.user.id });
+            if (!driver) {
+                return res.status(404).json({ msg: 'Driver profile not found' });
+            }
+            
+            booking = await Booking.findOne({ 
+                driver: driver._id,
+                status: { $in: ['accepted', 'started'] }
+            })
+            .populate('customer', 'name email phone');
+            
+        } else {
+            return res.status(403).json({ msg: 'Invalid user type' });
+        }
+        
+        if (!booking) {
+            return res.status(404).json({ msg: 'No active booking found' });
+        }
+        
+        res.json(booking);
+    } catch (err) {
+        console.error('Error fetching active booking:', err.message);
+        res.status(500).json({ msg: 'Server Error', error: err.message });
+    }
+});
+
 // @route   POST api/bookings
 // @desc    Create a new booking
 // @access  Private
@@ -320,54 +368,6 @@ router.get('/mybookings', auth, async (req, res) => {
         res.json(bookings);
     } catch (err) {
         console.error('Error in /mybookings:', err.message);
-        res.status(500).json({ msg: 'Server Error', error: err.message });
-    }
-});
-
-// @route   GET api/bookings/active
-// @desc    Get active booking for logged-in user
-// @access  Private
-router.get('/active', auth, async (req, res) => {
-    try {
-        let booking;
-        
-        if (req.user.userType === 'customer') {
-            booking = await Booking.findOne({ 
-                customer: req.user.id,
-                status: { $in: ['accepted', 'started'] }
-            })
-            .populate({
-                path: 'driver',
-                populate: {
-                    path: 'user',
-                    model: 'User',
-                    select: 'name email profilePicture'
-                }
-            });
-            
-        } else if (req.user.userType === 'driver') {
-            const driver = await Driver.findOne({ user: req.user.id });
-            if (!driver) {
-                return res.status(404).json({ msg: 'Driver profile not found' });
-            }
-            
-            booking = await Booking.findOne({ 
-                driver: driver._id,
-                status: { $in: ['accepted', 'started'] }
-            })
-            .populate('customer', 'name email phone');
-            
-        } else {
-            return res.status(403).json({ msg: 'Invalid user type' });
-        }
-        
-        if (!booking) {
-            return res.status(404).json({ msg: 'No active booking found' });
-        }
-        
-        res.json(booking);
-    } catch (err) {
-        console.error('Error fetching active booking:', err.message);
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 });
