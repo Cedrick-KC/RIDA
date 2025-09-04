@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+
 console.log('=== DEBUGGING ENVIRONMENT VARIABLES ===');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
 console.log('All REACT_APP vars:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP_')));
 console.log('============================================');
+
 // Animation variants
 const pageTransition = {
   initial: { opacity: 0, y: 20 },
@@ -15,6 +17,7 @@ const pageTransition = {
   exit: { opacity: 0, y: -20 },
   transition: { duration: 0.3 }
 };
+
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
@@ -26,6 +29,7 @@ const cardVariants = {
     },
   },
 };
+
 const hoverVariants = {
   rest: { scale: 1, y: 0 },
   hover: { 
@@ -34,6 +38,7 @@ const hoverVariants = {
     transition: { duration: 0.2, ease: "easeOut" }
   }
 };
+
 const pulseVariants = {
   rest: { scale: 1 },
   hover: { 
@@ -45,6 +50,7 @@ const pulseVariants = {
     }
   }
 };
+
 // Theme-aware color constants
 const themeColors = {
   light: {
@@ -76,6 +82,7 @@ const themeColors = {
     border: '#343a40'
   }
 };
+
 // MovingCarIcon component for the hero section
 const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
   return (
@@ -114,12 +121,14 @@ const MovingCarIcon = ({ direction = 'right', delay = 0 }) => {
     </motion.div>
   );
 };
+
 // Animated Card Component
 const AnimatedCard = ({ children, delay }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.2,
   });
+
   return (
     <motion.div
       ref={ref}
@@ -132,6 +141,7 @@ const AnimatedCard = ({ children, delay }) => {
     </motion.div>
   );
 };
+
 // Enhanced Navbar with improved responsiveness
 const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, theme, sidebarCollapsed, toggleSidebar }) => {
   const colors = themeColors[theme];
@@ -317,6 +327,7 @@ const Navbar = ({ user, currentPage, setCurrentPage, handleLogout, toggleTheme, 
     </motion.nav>
   );
 };
+
 // Reusable Navigation Button Component
 const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant = "outline-light" }) => (
   <motion.button
@@ -328,7 +339,8 @@ const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant
     <i className={`bi ${icon} me-1`}></i> {label}
   </motion.button>
 );
-// Enhanced Driver Card Component with profile picture
+
+// Enhanced Driver Card Component with profile picture and phone number
 const DriverCard = ({ driver, onBook, isBooking, theme }) => {
   const colors = themeColors[theme];
   
@@ -370,6 +382,11 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
                   <span>{driver.ratings?.average?.toFixed(1) || '5.0'}</span>
                 </div>
               </div>
+              {/* Added phone number display */}
+              <div className="d-flex align-items-center mt-1">
+                <i className="bi bi-telephone text-muted me-1"></i>
+                <span className="small">{driver.user.phone || 'No phone number'}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -379,10 +396,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
             <i className="bi bi-car-front text-muted me-2"></i>
             <span>{driver.vehicle?.make} {driver.vehicle?.model} ({driver.vehicle?.color})</span>
           </div>
-          <div className="d-flex align-items-center">
-            <i className="bi bi-currency-dollar text-muted me-2"></i>
-            <span>${driver.pricing?.hourlyRate || '25'}/hour</span>
-          </div>
+          {/* Removed hourly rate display */}
         </div>
         
         <div className="mt-auto">
@@ -410,6 +424,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
     </motion.div>
   );
 };
+
 // Driver Tracking Map Component (Placeholder)
 const DriverTrackingMap = ({ booking, theme }) => {
   const colors = themeColors[theme];
@@ -464,6 +479,7 @@ const DriverTrackingMap = ({ booking, theme }) => {
     </motion.div>
   );
 };
+
 // Notification Component
 const Notification = ({ message, type, visible, onClose }) => {
   const colors = themeColors['light']; // Using light theme for notifications
@@ -503,6 +519,7 @@ const Notification = ({ message, type, visible, onClose }) => {
     </AnimatePresence>
   );
 };
+
 // Driver Price Calculator Component - Updated with new calculation logic
 const DriverPriceCalculator = ({ theme }) => {
   const colors = themeColors[theme];
@@ -574,6 +591,7 @@ const DriverPriceCalculator = ({ theme }) => {
     </motion.div>
   );
 };
+
 // Fare Calculator Page Component - Updated with new calculation logic
 const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
@@ -699,6 +717,7 @@ const FareCalculatorPage = ({ user, token, showMessage, setCurrentPage, theme })
     </motion.div>
   );
 };
+
 // Main application component that manages state and "routing"
 const App = () => {
   // State to hold user information and their authentication token
@@ -1009,6 +1028,7 @@ const App = () => {
     </>
   );
 };
+
 // Admin Dashboard Component
 const AdminDashboard = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -1568,6 +1588,7 @@ const AdminDashboard = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
+
 // Enhanced Homepage component with improved hero section
 const HomePage = ({ setCurrentPage, theme }) => {
   const colors = themeColors[theme];
@@ -2182,6 +2203,7 @@ const HomePage = ({ setCurrentPage, theme }) => {
     </motion.div>
   );
 };
+
 // Review Modal Component
 const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
   const [rating, setRating] = useState(5);
@@ -2241,7 +2263,7 @@ const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
                       className="btn btn-lg p-0 me-1"
                       onClick={() => setRating(star)}
                     >
-                      <i className={`bi ${star <= rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'}`}></i>
+                      <i className={`bi ${star <= rating ? 'bi-star-fill' : 'bi-star'}`}></i>
                     </button>
                   ))}
                   <span className="ms-2">{rating} / 5</span>
@@ -2273,6 +2295,7 @@ const ReviewModal = ({ show, onClose, booking, user, token, showMessage }) => {
     </div>
   );
 };
+
 // Customer Dashboard Component - Fixed with single payment method and driver filtering
 const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) => {
   const colors = themeColors[theme];
@@ -3190,6 +3213,7 @@ const CustomerDashboard = ({ user, token, showMessage, setCurrentPage, theme }) 
     </motion.div>
   );
 };
+
 // Driver Dashboard Component - Updated with availability toggle
 const DriverDashboard = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3482,6 +3506,7 @@ const DriverDashboard = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
+
 // Booking List component that fetches user-specific bookings
 const BookingList = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3682,6 +3707,7 @@ const BookingList = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
+
 // Reviews Page Component
 const ReviewsPage = ({ user, token, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3788,6 +3814,7 @@ const ReviewsPage = ({ user, token, showMessage, theme }) => {
     </div>
   );
 };
+
 // Login form component
 const Login = ({ onLoginSuccess, showMessage, theme }) => {
   const colors = themeColors[theme];
@@ -3880,7 +3907,8 @@ const Login = ({ onLoginSuccess, showMessage, theme }) => {
     </div>
   );
 };
-// Registration form component
+
+// Registration form component - Updated to remove hourly rate field
 const Register = ({ onRegisterSuccess, showMessage, theme }) => {
   const colors = themeColors[theme];
   // State for all form fields, including nested fields for drivers
@@ -3897,9 +3925,7 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
       licensePlate: '',
       color: '',
     },
-    pricing: {
-      hourlyRate: 0,
-    },
+    // Removed pricing.hourlyRate field
     bio: '',
     // New driver profile fields
     ageRange: '',
@@ -3919,7 +3945,7 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  // Specific handler for nested fields like vehicle or pricing
+  // Specific handler for nested fields like vehicle
   const handleNestedChange = (e, parent) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -3969,7 +3995,7 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
           licensePlate: formData.vehicle.licensePlate.trim().toUpperCase(),
           color: formData.vehicle.color.trim(),
         };
-        payload.pricing = formData.pricing;
+        // Removed pricing field from payload
         payload.bio = formData.bio.trim();
         
         // Add new driver profile fields
@@ -4206,23 +4232,7 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
               </div>
             </div>
             
-            {/* Pricing Section */}
-            <h5 className="h6 fw-semibold mb-2 text-muted mt-3">Pricing</h5>
-            <div className="form-group">
-              <label className="form-label fw-semibold">Hourly Rate ($)</label>
-              <input
-                type="number"
-                name="hourlyRate"
-                value={formData.pricing.hourlyRate}
-                onChange={(e) => handleNestedChange(e, 'pricing')}
-                className="form-control rounded-3"
-                min="0"
-                step="0.01"
-                placeholder="25.00"
-                required
-                style={{ backgroundColor: colors.background, color: colors.text, border: `1px solid ${colors.border}` }}
-              />
-            </div>
+            {/* Removed Pricing Section */}
             
             {/* Driver Preferences Section */}
             <h5 className="h6 fw-semibold mb-2 text-muted mt-3">Driver Preferences</h5>
@@ -4392,4 +4402,5 @@ const Register = ({ onRegisterSuccess, showMessage, theme }) => {
     </motion.div>
   );
 };
+
 export default App;
