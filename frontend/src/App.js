@@ -465,8 +465,26 @@ const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant
 );
 
 // Enhanced Driver Card Component with profile picture and phone number
+// Enhanced Driver Card Component with profile picture and phone number - CORRECTED VERSION
 const DriverCard = ({ driver, onBook, isBooking, theme }) => {
   const colors = themeColors[theme];
+  
+  // Add comprehensive safety checks
+  if (!driver) {
+    console.error('Driver is null/undefined:', driver);
+    return (
+      <div className="card h-100 border-0 shadow-sm">
+        <div className="card-body d-flex align-items-center justify-content-center">
+          <span className="text-muted">Driver data unavailable</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Log for debugging
+  if (!driver.user) {
+    console.warn('Driver missing user object:', driver);
+  }
   
   return (
     <motion.div 
@@ -484,7 +502,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
               {driver.profilePicture ? (
                 <img 
                   src={driver.profilePicture} 
-                  alt={driver.user.name}
+                  alt={driver.user?.name || 'Driver'}
                   className="rounded-circle"
                   style={{ width: '60px', height: '60px', objectFit: 'cover' }}
                 />
@@ -496,7 +514,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
               )}
             </div>
             <div>
-              <h5 className="card-title mb-1">{driver.user.name}</h5>
+              <h5 className="card-title mb-1">{driver.user?.name || 'Unknown Driver'}</h5>
               <div className="d-flex align-items-center gap-2">
                 <span className={`badge ${driver.availability?.isAvailable ? 'bg-success' : 'bg-danger'}`}>
                   {driver.availability?.isAvailable ? 'Available' : 'Unavailable'}
@@ -509,7 +527,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
               {/* Added phone number display */}
               <div className="d-flex align-items-center mt-1">
                 <i className="bi bi-telephone text-muted me-1"></i>
-                <span className="small">{driver.user.phone || 'No phone number'}</span>
+                <span className="small">{driver.user?.phone || 'No phone number'}</span>
               </div>
             </div>
           </div>
@@ -518,7 +536,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
         <div className="mb-4">
           <div className="d-flex align-items-center mb-2">
             <i className="bi bi-car-front text-muted me-2"></i>
-            <span>{driver.vehicle?.make} {driver.vehicle?.model} ({driver.vehicle?.color})</span>
+            <span>{driver.vehicle?.make || 'Unknown'} {driver.vehicle?.model || 'Vehicle'} ({driver.vehicle?.color || 'Unknown Color'})</span>
           </div>
           {/* Removed hourly rate display */}
         </div>
@@ -548,7 +566,6 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
     </motion.div>
   );
 };
-
 // Driver Tracking Map Component (Placeholder)
 const DriverTrackingMap = ({ booking, theme }) => {
   const colors = themeColors[theme];
