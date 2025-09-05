@@ -3,7 +3,10 @@ const express = require('express');
 const connectDB = require('./config/db.js');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+
 console.log('🔍 Starting route registration debugging...');
+
 // Import routes
 const authRoutes = require('./routes/auth.js');
 const bookingRoutes = require('./routes/bookings.js');
@@ -27,7 +30,6 @@ app.use(cors({
 app.use(express.json());
 
 // Create uploads directory if it doesn't exist
-const fs = require('fs');
 const uploadsDir = path.join(__dirname, 'uploads');
 const profilesDir = path.join(uploadsDir, 'profiles');
 
@@ -44,7 +46,7 @@ if (!fs.existsSync(profilesDir)) {
 // Serve static files from uploads directory
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// API Routes
+// API Routes - Keep these BEFORE static file serving
 app.get('/', (req, res) => {
     res.json({ message: 'Driver Booking Platform API running' });
 });
@@ -55,36 +57,71 @@ app.use('/api/drivers', driverRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Error handling middleware
-app.use((req, res, next) => {
+// For production - serve React build
+if (process.env.NODE_ENV === 'production') {
+    const buildPath = path.join(__dirname, '../frontend/build');
+    
+    console.log('🚀 Production mode: Serving React app from', buildPath);
+    
+    // Check if build directory exists
+    if (fs.existsSync(buildPath)) {
+        console.log('✅ Build directory found');
+        
+        // Serve static files (JS, CSS, images, etc.) - THIS MUST COME FIRST
+        app.use(express.static(buildPath, {
+            maxAge: '1d', // Cache static assets
+            index: false  // Don't automatically serve index.html for directories
+        }));
+        
+        // Handle React Router - send index.html for non-API, non-static routes
+        app.get('*', (req, res) => {
+            console.log(`📄 Serving React app for route: ${req.url}`);
+            res.sendFile(path.join(buildPath, 'index.html'));
+        });
+        
+    } else {
+        console.error('❌ Build directory not found at:', buildPath);
+        console.error('Make sure to run "npm run build" in the frontend directory');
+    }
+}
+
+// Error handling middleware - Only for API routes
+app.use('/api/*', (req, res, next) => {
     const error = new Error(`Cannot ${req.method} ${req.originalUrl}`);
     error.status = 404;
     next(error);
 });
 
+// Global error handler
 app.use((error, req, res, next) => {
     console.error('Error:', error.message);
-    res.status(error.status || 500).json({
-        error: {
-            message: error.message,
-            status: error.status || 500
+    
+    // Only send JSON error for API routes
+    if (req.url.startsWith('/api/')) {
+        res.status(error.status || 500).json({
+            error: {
+                message: error.message,
+                status: error.status || 500
+            }
+        });
+    } else {
+        // For non-API routes in production, serve the React app
+        if (process.env.NODE_ENV === 'production') {
+            const buildPath = path.join(__dirname, '../frontend/build');
+            res.sendFile(path.join(buildPath, 'index.html'));
+        } else {
+            res.status(500).send('Something went wrong!');
         }
-    });
+    }
 });
 
-// For production - serve React build
-if (process.env.NODE_ENV === 'production') {
-    // Set static folder
-    app.use(express.static(path.join(__dirname, '../build')));
-    
-    // Any routes that don't match API routes will be handled by React
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
-    });
-}
-
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    
+    if (process.env.NODE_ENV === 'production') {
+        console.log('📦 Serving React app from ../frontend/build');
+    }
 });
