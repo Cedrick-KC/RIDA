@@ -61,12 +61,13 @@ app.use('/api/drivers', driverRoutes || ((req, res) => res.status(500).json({ er
 app.use('/api/reviews', reviewsRoutes || ((req, res) => res.status(500).json({ error: 'Reviews routes failed to load' })));
 app.use('/api/admin', adminRoutes || ((req, res) => res.status(500).json({ error: 'Admin routes failed to load' })));
 
-// Catch-all for undefined API routes (fixed path-to-regexp issue)
-app.all('/api/*', (req, res, next) => {
+
+app.use('/api', (req, res, next) => {
   const error = new Error(`Cannot ${req.method} ${req.originalUrl}`);
   error.status = 404;
   next(error);
 });
+
 
 // Global error handler
 app.use((error, req, res, next) => {
