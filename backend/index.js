@@ -51,11 +51,11 @@ app.get('/', (req, res) => {
     res.json({ message: 'Driver Booking Platform API running' });
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/bookings', bookingRoutes);
-app.use('/api/drivers', driverRoutes);
-app.use('/api/reviews', reviewsRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes || ((req, res) => res.status(500).json({error: 'Auth routes failed to load'})));
+app.use('/api/bookings', bookingRoutes || ((req, res) => res.status(500).json({error: 'Booking routes failed to load'})));
+app.use('/api/drivers', driverRoutes || ((req, res) => res.status(500).json({error: 'Driver routes failed to load'})));
+app.use('/api/reviews', reviewsRoutes || ((req, res) => res.status(500).json({error: 'Reviews routes failed to load'})));
+app.use('/api/admin', adminRoutes || ((req, res) => res.status(500).json({error: 'Admin routes failed to load'})));
 
 // For production - serve React build
 if (process.env.NODE_ENV === 'production') {
