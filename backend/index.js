@@ -71,7 +71,7 @@ app.use((error, req, res, next) => {
         }
     });
 });
-/*
+
 // For production - serve React build
 if (process.env.NODE_ENV === 'production') {
     // Set static folder
@@ -82,7 +82,7 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(__dirname, '../build', 'index.html'));
     });
 }
-*/
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
