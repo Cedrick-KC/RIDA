@@ -1,4 +1,3 @@
-import config from './config';
 import React, { useState, useEffect, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -154,7 +153,6 @@ const NotificationProvider = ({ children }) => {
 };
 
 // MovingCarIcon component for the hero section
-
 const MovingCarIcon = ({ direction = 'right', delay = 0, theme }) => {
   const colors = theme ? themeColors[theme] : themeColors.light;
   
@@ -194,14 +192,13 @@ const MovingCarIcon = ({ direction = 'right', delay = 0, theme }) => {
     </motion.div>
   );
 };
-// Animated Card Component
+
 // Animated Card Component
 const AnimatedCard = ({ children, delay, theme }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.2,
   });
-
   return (
     <motion.div
       ref={ref}
@@ -464,7 +461,6 @@ const NavButton = ({ icon, label, currentPage, setCurrentPage, pageName, variant
   </motion.button>
 );
 
-// Enhanced Driver Card Component with profile picture and phone number
 // Enhanced Driver Card Component with profile picture and phone number - CORRECTED VERSION
 const DriverCard = ({ driver, onBook, isBooking, theme }) => {
   const colors = themeColors[theme];
@@ -480,7 +476,6 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
       </div>
     );
   }
-
   // Log for debugging
   if (!driver.user) {
     console.warn('Driver missing user object:', driver);
@@ -566,6 +561,7 @@ const DriverCard = ({ driver, onBook, isBooking, theme }) => {
     </motion.div>
   );
 };
+
 // Driver Tracking Map Component (Placeholder)
 const DriverTrackingMap = ({ booking, theme }) => {
   const colors = themeColors[theme];
@@ -1704,7 +1700,6 @@ const AdminDashboard = ({ user, token, showMessage, theme }) => {
 };
 
 // Enhanced Homepage component with improved hero section
-// Enhanced Homepage component with improved hero section
 const HomePage = ({ setCurrentPage, theme }) => {
   // Add a safety check for the theme prop
   const colors = theme ? themeColors[theme] : themeColors.light;
@@ -2013,189 +2008,167 @@ const HomePage = ({ setCurrentPage, theme }) => {
         </div>
       </div>
       
-     // 4. How It Works Section - Updated with better styling
-const HowItWorksSection = () => {
-  const colors = {
-     cardBg: '#ffffff',
-     border: '#e9ecef'
-  };
-
-  const steps = [
-    { 
-      icon: 'bi-person-plus', 
-      title: 'Sign Up', 
-      description: 'Create an account or log in to your existing account.',
-      color: 'primary'
-    },
-    { 
-      icon: 'bi-funnel', 
-      title: 'Filter Drivers', 
-      description: 'Use our advanced filtering system to find drivers that match your specific requirements.',
-      color: 'info'
-    },
-    { 
-      icon: 'bi-calendar-check', 
-      title: 'Book Driver', 
-      description: 'Select your preferred driver and provide trip details including pickup location, time, and destination.',
-      color: 'success'
-    },
-    { 
-      icon: 'bi-car-front', 
-      title: 'Enjoy Ride', 
-      description: 'Your professional driver will arrive at the scheduled time and get you to your destination safely.',
-      color: 'warning'
-    },
-    { 
-      icon: 'bi-cash-coin', 
-      title: 'Pay & Rate', 
-      description: 'Pay the calculated fare and rate your experience to help us improve our service.',
-      color: 'danger'
-    }
-  ];
-
-  return (
-    <div className="row mb-5">
-      <div className="col-12">
-        <h2 className="text-center mb-2">How It Works</h2>
-        <p className="text-center text-muted mb-4">Simple steps to get your professional driver</p>
-        
-        <div className="position-relative">
-          {/* Timeline line */}
-          <div className="d-none d-md-block position-absolute top-50 start-0 end-0 translate-middle-y" 
-               style={{ height: '4px', backgroundColor: '#e9ecef', zIndex: 0 }}>
+      {/* 4. How It Works Section - Updated with better styling */}
+      <div className="row mb-5">
+        <div className="col-12">
+          <h2 className="text-center mb-2">How It Works</h2>
+          <p className="text-center text-muted mb-4">Simple steps to get your professional driver</p>
+          
+          <div className="position-relative">
+            {/* Timeline line */}
+            <div className="d-none d-md-block position-absolute top-50 start-0 end-0 translate-middle-y" 
+                 style={{ height: '4px', backgroundColor: '#e9ecef', zIndex: 0 }}>
+            </div>
+            
+            <div className="row g-4">
+              {[
+                { 
+                  icon: 'bi-person-plus', 
+                  title: 'Sign Up', 
+                  description: 'Create an account or log in to your existing account.',
+                  color: 'primary'
+                },
+                { 
+                  icon: 'bi-funnel', 
+                  title: 'Filter Drivers', 
+                  description: 'Use our advanced filtering system to find drivers that match your specific requirements.',
+                  color: 'info'
+                },
+                { 
+                  icon: 'bi-calendar-check', 
+                  title: 'Book Driver', 
+                  description: 'Select your preferred driver and provide trip details including pickup location, time, and destination.',
+                  color: 'success'
+                },
+                { 
+                  icon: 'bi-car-front', 
+                  title: 'Enjoy Ride', 
+                  description: 'Your professional driver will arrive at the scheduled time and get you to your destination safely.',
+                  color: 'warning'
+                },
+                { 
+                  icon: 'bi-cash-coin', 
+                  title: 'Pay & Rate', 
+                  description: 'Pay the calculated fare and rate your experience to help us improve our service.',
+                  color: 'danger'
+                }
+              ].map((step, index) => (
+                <div key={index} className="col-12 col-md-6 col-lg">
+                  <AnimatedCard delay={index * 0.1}>
+                    <motion.div 
+                      className="card h-100 border-0 shadow-sm text-center p-4 position-relative"
+                      style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
+                      whileHover={{ 
+                        y: -10,
+                        boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
+                      }}
+                    >
+                      {/* Step number circle */}
+                      <div className="position-absolute top-0 start-50 translate-middle mt-n3">
+                        <div className={`rounded-circle bg-${step.color} text-white d-flex align-items-center justify-content-center`} 
+                             style={{ width: '40px', height: '40px', zIndex: 1 }}>
+                          {index + 1}
+                        </div>
+                      </div>
+                      
+                      {/* Icon */}
+                      <motion.div 
+                        className={`text-${step.color} mb-3 mt-2`}
+                        whileHover={{ rotate: 15, scale: 1.2 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <i className={`bi ${step.icon} fs-1`}></i>
+                      </motion.div>
+                      
+                      {/* Title */}
+                      <h4 className="card-title">{step.title}</h4>
+                      
+                      {/* Description */}
+                      <p className="card-text">{step.description}</p>
+                    </motion.div>
+                  </AnimatedCard>
+                </div>
+              ))}
+            </div>
           </div>
           
+          <div className="text-center mt-5">
+            <motion.button 
+              className="btn btn-primary btn-lg fw-semibold px-4"
+              onClick={() => setCurrentPage('register')}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.3)"
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <i className="bi bi-person-plus me-2"></i> Get Started Now
+            </motion.button>
+          </div>
+        </div>
+      </div>
+      
+      {/* 5. Why Choose Our Drivers Section */}
+      <div className="row mb-5">
+        <div className="col-12">
+          <h2 className="text-center mb-4">Why Choose Our Drivers</h2>
           <div className="row g-4">
-            {steps.map((step, index) => (
-              <div key={index} className="col-12 col-md-6 col-lg">
-                <AnimatedCard delay={index * 0.1}>
+            {[
+              {
+                icon: 'bi-shield-check',
+                title: 'Verified Professionals',
+                description: 'All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.',
+                color: 'primary',
+                delay: 0.1
+              },
+              {
+                icon: 'bi-currency-dollar',
+                title: 'Transparent Pricing',
+                description: 'Competitive pricing with no hidden fees. Know exactly what you\'ll pay before booking.',
+                color: 'success',
+                delay: 0.3
+              },
+              {
+                icon: 'bi-clock-history',
+                title: '24/7 Availability',
+                description: 'Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use platform.',
+                color: 'info',
+                delay: 0.5
+              },
+              {
+                icon: 'bi-person-badge',
+                title: 'Experienced Drivers',
+                description: 'Professional, courteous drivers who prioritize your comfort and punctuality.',
+                color: 'warning',
+                delay: 0.7
+              }
+            ].map((feature, index) => (
+              <div key={index} className="col-6 col-md-3">
+                <AnimatedCard delay={feature.delay}>
                   <motion.div 
-                    className="card h-100 border-0 shadow-sm text-center p-4 position-relative"
+                    className="card h-100 border-0 shadow-sm text-center p-4"
                     style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
                     whileHover={{ 
                       y: -10,
                       boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
                     }}
                   >
-                    {/* Step number circle */}
-                    <div className="position-absolute top-0 start-50 translate-middle mt-n3">
-                      <div className={`rounded-circle bg-${step.color} text-white d-flex align-items-center justify-content-center`} 
-                           style={{ width: '40px', height: '40px', zIndex: 1 }}>
-                        {index + 1}
-                      </div>
-                    </div>
-                    
-                    {/* Icon */}
                     <motion.div 
-                      className={`text-${step.color} mb-3 mt-2`}
+                      className={`text-${feature.color} mb-3`}
                       whileHover={{ rotate: 15, scale: 1.2 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <i className={`bi ${step.icon} fs-1`}></i>
+                      <i className={`bi ${feature.icon} fs-1`}></i>
                     </motion.div>
-                    
-                    {/* Title */}
-                    <h4 className="card-title">{step.title}</h4>
-                    
-                    {/* Description */}
-                    <p className="card-text">{step.description}</p>
+                    <h4 className="card-title">{feature.title}</h4>
+                    <p className="card-text">{feature.description}</p>
                   </motion.div>
                 </AnimatedCard>
               </div>
             ))}
           </div>
         </div>
-        
-        <div className="text-center mt-5">
-          <motion.button 
-            className="btn btn-primary btn-lg fw-semibold px-4"
-            onClick={() => setCurrentPage('register')}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 10px 25px -5px rgba(0, 86, 179, 0.3)"
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <i className="bi bi-person-plus me-2"></i> Get Started Now
-          </motion.button>
-        </div>
       </div>
-    </div>
-  );
-};
-
-    const WhyChooseDriversSection = () => {
-  // Define colors variable
-  const colors = {
-    cardBg: '#ffffff',
-    border: '#e9ecef'
-  };
-
-  const features = [
-    {
-      icon: 'bi-shield-check',
-      title: 'Verified Professionals',
-      description: 'All our drivers undergo thorough background checks and vehicle inspections to ensure your safety.',
-      color: 'primary',
-      delay: 0.1
-    },
-    {
-      icon: 'bi-currency-dollar',
-      title: 'Transparent Pricing',
-      description: 'Competitive pricing with no hidden fees. Know exactly what you\'ll pay before booking.',
-      color: 'success',
-      delay: 0.3
-    },
-    {
-      icon: 'bi-clock-history',
-      title: '24/7 Availability',
-      description: 'Our service is available round the clock. Book a ride anytime, anywhere with our easy-to-use platform.',
-      color: 'info',
-      delay: 0.5
-    },
-    {
-      icon: 'bi-person-badge',
-      title: 'Experienced Drivers',
-      description: 'Professional, courteous drivers who prioritize your comfort and punctuality.',
-      color: 'warning',
-      delay: 0.7
-    }
-  ];
-
-  return (
-    <div className="row mb-5">
-      <div className="col-12">
-        <h2 className="text-center mb-4">Why Choose Our Drivers</h2>
-        <div className="row g-4">
-          {features.map((feature, index) => (
-            <div key={index} className="col-6 col-md-3">
-              <AnimatedCard delay={feature.delay}>
-                <motion.div 
-                  className="card h-100 border-0 shadow-sm text-center p-4"
-                  style={{ backgroundColor: colors.cardBg, border: `1px solid ${colors.border}` }}
-                  whileHover={{ 
-                    y: -10,
-                    boxShadow: "0 10px 30px -15px rgba(0, 0, 0, 0.3)"
-                  }}
-                >
-                  <motion.div 
-                    className={`text-${feature.color} mb-3`}
-                    whileHover={{ rotate: 15, scale: 1.2 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <i className={`bi ${feature.icon} fs-1`}></i>
-                  </motion.div>
-                  <h4 className="card-title">{feature.title}</h4>
-                  <p className="card-text">{feature.description}</p>
-                </motion.div>
-              </AnimatedCard>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
       
       {/* 6. Book Your Driver Now Section */}
       <div className="text-center py-5 mb-5">
