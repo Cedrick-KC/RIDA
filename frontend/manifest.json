@@ -1,0 +1,23 @@
+{
+  "short_name": "RIDA",
+  "name": "RIDA Driver Booking Platform",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0056b3",
+  "description": "Futuristic driver booking platform with 2050 vision features",
+  "orientation": "portrait-primary",
+  "categories": ["transportation", "travel", "business"]
+}

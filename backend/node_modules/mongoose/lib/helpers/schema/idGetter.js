@@ -12,7 +12,7 @@ module.exports = function addIdGetter(schema) {
   if (!autoIdGetter) {
     return schema;
   }
-  if (schema.aliases && schema.aliases.id) {
+  if (schema.aliases?.id) {
     return schema;
   }
   schema.virtual('id').get(idGetter);
@@ -26,6 +26,9 @@ module.exports = function addIdGetter(schema) {
  */
 
 function idGetter() {
+  if (this._doc) {
+    return this._doc._id?.toString() ?? null;
+  }
   if (this._id != null) {
     return this._id.toString();
   }

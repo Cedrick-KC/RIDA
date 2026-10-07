@@ -69,21 +69,26 @@ declare namespace MockInterceptor {
     headers?: Headers | Record<string, string>;
     origin?: string;
     body?: BodyInit | Dispatcher.DispatchOptions['body'] | null;
-    maxRedirections?: number;
   }
 
   export type MockResponseDataHandler<TData extends object = object> = (
     opts: MockResponseCallbackOptions
   ) => TData | Buffer | string
 
+  export type MockReplyOptions<TData extends object = object> = {
+    statusCode: number, data?: TData | Buffer | string, responseOptions?: MockResponseOptions
+  }
+
   export type MockReplyOptionsCallback<TData extends object = object> = (
     opts: MockResponseCallbackOptions
-  ) => { statusCode: number, data?: TData | Buffer | string, responseOptions?: MockResponseOptions }
+  ) => MockReplyOptions<TData> | Promise<MockReplyOptions<TData>>
 }
 
 interface Interceptable extends Dispatcher {
   /** Intercepts any matching requests that use the same origin as this mock client. */
   intercept(options: MockInterceptor.Options): MockInterceptor;
+  /** Clean up all the prepared mocks. */
+  cleanMocks (): void
 }
 
 export {

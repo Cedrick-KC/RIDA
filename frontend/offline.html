@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RIDA - Offline</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        color: #212529;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        text-align: center;
+      }
+      .container {
+        max-width: 400px;
+        padding: 2rem;
+      }
+      .logo {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #0056b3;
+      }
+      h1 {
+        margin-bottom: 1rem;
+      }
+      p {
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+      .spinner {
+        display: inline-block;
+        width: 3rem;
+        height: 3rem;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #0056b3;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      a {
+        color: #0056b3;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">RIDA</div>
+      <h1>You're Offline</h1>
+      <p>
+        It looks like you've lost your internet connection.
+        Please check your connection and try again.
+      </p>
+      <div class="spinner"></div>
+      <p>
+        <a href="/">Try refreshing the page</a>
+      </p>
+    </div>
+  </body>
+</html>

@@ -19,7 +19,7 @@ const isPathSelectedInclusive = require('./helpers/projection/isPathSelectedIncl
  * version
  *
  * @param {Query} query
- * @param {Object} options
+ * @param {object} options
  * @return {Array}
  */
 
@@ -30,11 +30,11 @@ exports.preparePopulationOptionsMQ = function preparePopulationOptionsMQ(query, 
   // lean options should trickle through all queries
   if (options.lean != null) {
     pop
-      .filter(p => (p && p.options && p.options.lean) == null)
+      .filter(p => p?.options?.lean == null)
       .forEach(makeLean(options.lean));
   }
 
-  const session = query && query.options && query.options.session || null;
+  const session = query?.options?.session || null;
   if (session != null) {
     pop.forEach(path => {
       if (path.options == null) {
@@ -69,8 +69,8 @@ exports.preparePopulationOptionsMQ = function preparePopulationOptionsMQ(query, 
  * it returns an instance of the given model.
  *
  * @param {Model}  model
- * @param {Object} doc
- * @param {Object} fields
+ * @param {object} doc
+ * @param {object} fields
  *
  * @return {Document}
  */
@@ -80,9 +80,21 @@ exports.createModel = function createModel(model, doc, fields, userProvidedField
     model.schema.discriminatorMapping :
     null;
 
-  const key = discriminatorMapping && discriminatorMapping.isRoot ?
+  const key = discriminatorMapping?.isRoot ?
     discriminatorMapping.key :
     null;
+
+  const _opts = {
+    skipId: true,
+    isNew: false,
+    willInit: true
+  };
+  if (options?.defaults != null) {
+    _opts.defaults = options.defaults;
+  }
+  if (options?.strict != null) {
+    _opts.strict = options.strict;
+  }
 
   const value = doc[key];
   if (key && value && model.discriminators) {
@@ -90,18 +102,11 @@ exports.createModel = function createModel(model, doc, fields, userProvidedField
     if (discriminator) {
       const _fields = clone(userProvidedFields);
       exports.applyPaths(_fields, discriminator.schema);
-      return new discriminator(undefined, _fields, true);
+
+      return new discriminator(undefined, _fields, _opts);
     }
   }
 
-  const _opts = {
-    skipId: true,
-    isNew: false,
-    willInit: true
-  };
-  if (options != null && 'defaults' in options) {
-    _opts.defaults = options.defaults;
-  }
   return new model(undefined, fields, _opts);
 };
 
@@ -110,9 +115,13 @@ exports.createModel = function createModel(model, doc, fields, userProvidedField
  */
 
 exports.createModelAndInit = function createModelAndInit(model, doc, fields, userProvidedFields, options, populatedIds, callback) {
-  const initOpts = populatedIds ?
-    { populated: populatedIds } :
-    undefined;
+  const initOpts = {};
+  if (populatedIds) {
+    initOpts.populated = populatedIds;
+  }
+  if (options?.middleware != null) {
+    initOpts.middleware = options.middleware;
+  }
 
   const casted = exports.createModel(model, doc, fields, userProvidedFields, options);
   try {
@@ -179,10 +188,10 @@ exports.applyPaths = function applyPaths(fields, schema, sanitizeProjection) {
       // inclusive, minus path is treated as equivalent to `key: 0`.
       // But we also allow using `-name` to remove `name` from an inclusive
       // projection if `name` has schema-level `select: true`.
-      if ((!type || !type.selected) || exclude !== false) {
+      if (!type?.selected || exclude !== false) {
         fields[path] = 0;
         exclude = true;
-      } else if (type && type.selected && exclude === false) {
+      } else if (type?.selected && exclude === false) {
         // Make a note of minus paths that are overwriting paths that are
         // included by default.
         minusPathsToSkip.add(path);
@@ -200,14 +209,18 @@ exports.applyPaths = function applyPaths(fields, schema, sanitizeProjection) {
   switch (exclude) {
     case true:
       for (const fieldName of excluded) {
+        // Skip if an ancestor path is already excluded in `fields` (for
+        // example the user did `.select('-subd')` and `subd.raw` has
+        // schema-level `select: false`) to avoid MongoDB's "Path collision"
+        // error from projecting both `subd` and `subd.raw`. See gh-12798
+        if (hasExcludedAncestor(fields, fieldName)) {
+          continue;
+        }
         fields[fieldName] = 0;
       }
       break;
     case false:
-      if (schema &&
-          schema.paths['_id'] &&
-          schema.paths['_id'].options &&
-          schema.paths['_id'].options.select === false) {
+      if (schema?.paths['_id']?.options?.select === false) {
         fields._id = 0;
       }
 
@@ -260,7 +273,7 @@ exports.applyPaths = function applyPaths(fields, schema, sanitizeProjection) {
       if (type.$isSchemaMap || path.endsWith('.$*')) {
         const plusPath = '+' + path;
         const hasPlusPath = fields && plusPath in fields;
-        if (type.options && type.options.select === false && !hasPlusPath) {
+        if (type.options?.select === false && !hasPlusPath) {
           excluded.push(path);
         }
         return;
@@ -268,7 +281,7 @@ exports.applyPaths = function applyPaths(fields, schema, sanitizeProjection) {
       let addedPath = analyzePath(path, type);
       // arrays
       if (addedPath == null && !Array.isArray(type) && type.$isMongooseArray && !type.$isMongooseDocumentArray) {
-        addedPath = analyzePath(path, type.caster);
+        addedPath = analyzePath(path, type.embeddedSchemaType);
       }
       if (addedPath != null) {
         addedPaths.push(addedPath);
@@ -352,7 +365,7 @@ exports.applyPaths = function applyPaths(fields, schema, sanitizeProjection) {
     // Special case: if user has included a parent path of a discriminator key,
     // don't explicitly project in the discriminator key because that will
     // project out everything else under the parent path
-    if (!exclude && (type && type.options && type.options.$skipDiscriminatorCheck || false)) {
+    if (!exclude && (type?.options?.$skipDiscriminatorCheck || false)) {
       let cur = '';
       for (let i = 0; i < pieces.length; ++i) {
         cur += (cur.length === 0 ? '' : '.') + pieces[i];
@@ -366,19 +379,34 @@ exports.applyPaths = function applyPaths(fields, schema, sanitizeProjection) {
     (type.selected ? selected : excluded).push(path);
     return path;
   }
+
+  function hasExcludedAncestor(fields, path) {
+    let i = -1;
+    while ((i = path.indexOf('.', i + 1)) !== -1) {
+      const ancestor = fields[path.slice(0, i)];
+      // Any falsy defining value (`0`, `false`, `''`, `NaN`) excludes a
+      // path, matching how `exclude` itself is derived above (`!field`).
+      // `ancestor == null` means the key isn't present at all, which is
+      // not an exclusion. See gh-12798
+      if (ancestor != null && !ancestor) {
+        return true;
+      }
+    }
+    return false;
+  }
 };
 
 /**
  * Set each path query option to lean
  *
- * @param {Object} option
+ * @param {object} option
  */
 
 function makeLean(val) {
   return function(option) {
     option.options || (option.options = {});
 
-    if (val != null && Array.isArray(val.virtuals)) {
+    if (Array.isArray(val?.virtuals)) {
       val = Object.assign({}, val);
       val.virtuals = val.virtuals.
         filter(path => typeof path === 'string' && path.startsWith(option.path + '.')).
